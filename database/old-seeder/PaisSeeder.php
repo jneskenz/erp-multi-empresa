@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Erp\Pais;
+use App\Models\Workspace\Pais;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

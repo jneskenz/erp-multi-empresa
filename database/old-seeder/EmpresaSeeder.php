@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Erp\Empresa;
+use App\Models\Workspace\Empresa;
 use Illuminate\Database\Seeder;
 
 class EmpresaSeeder extends Seeder

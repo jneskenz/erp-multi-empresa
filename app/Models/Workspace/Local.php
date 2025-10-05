@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Erp;
+namespace App\Models\Workspace;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,14 +16,25 @@ class Local extends Model
     protected $table = 'locales';
 
     protected $fillable = [
-        'descripcion',
         'codigo',
         'direccion',
-        'correo',
+        'email',
         'telefono',
         'whatsapp',
         'estado',
         'sede_id',
+        'user_uuid',
+        'grupo_empresa_id',
+        'empresa_id',
+        'sede_id',
+        'estado',
+        'descripcion',
+        'nombre',
+        'slug',
+        'tipo',
+        'referencia',
+        'horarios',
+
     ];
 
     protected $casts = [

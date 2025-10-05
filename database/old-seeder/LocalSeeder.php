@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Erp\Empresa;
-use App\Models\Erp\Local;
-use App\Models\Erp\Sede;
+use App\Models\Workspace\Empresa;
+use App\Models\Workspace\Local;
+use App\Models\Workspace\Sede;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

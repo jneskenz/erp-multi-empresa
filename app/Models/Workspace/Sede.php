@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Erp;
+namespace App\Models\Workspace;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,10 +18,21 @@ class Sede extends Model
 
     protected $fillable = [
         'nombre',
+        'slug',
         'codigo',
         'descripcion',
-        'estado',
-        'empresa_id',
+        'ciudad',
+        'departamento',
+        'pais',
+        'latitud',
+        'longitud',
+        'telefono',
+        'email',
+        'direccion',
+        'activo',
+        'es_principal',
+        'grupo_empresa_id',
+
     ];
 
     // Relación con el modelo Empresa

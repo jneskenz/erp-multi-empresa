@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+            'superusuario' => \App\Http\Middleware\VerificarSuperusuario::class,
+            'grupo.access' => \App\Http\Middleware\VerificarAccesoGrupo::class,
+            'empresa.access' => \App\Http\Middleware\VerificarAccesoEmpresa::class,
+            // 'rol.administrador' => \App\Http\Middleware\VerificarRolAdministrador::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

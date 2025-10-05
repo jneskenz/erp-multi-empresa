@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories\Erp;
+namespace Database\Factories\Workspace;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Erp\Pais>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Workspace\Pais>
  */
 class PaisFactory extends Factory
 {

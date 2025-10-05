@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories\Erp;
+namespace Database\Factories\Workspace;
 
-use App\Models\Erp\Local;
-use App\Models\Erp\Sede;
+use App\Models\Workspace\Local;
+use App\Models\Workspace\Sede;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Erp\Local>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Workspace\Local>
  */
 class LocalFactory extends Factory
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\Erp;
+namespace App\Models\Workspace;
 
+use App\Models\Empresa;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -23,10 +24,10 @@ class Pais extends Model
         'estado',
     ];
 
-    public function empresas()
-    {
-        return $this->hasMany(Empresa::class, 'pais_id');
-    }
+    // public function empresas()
+    // {
+    //     return $this->hasMany(Empresa::class, 'pais_id');
+    // }
     
     public function getActivitylogOptions(): LogOptions
     {

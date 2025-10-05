@@ -25,7 +25,7 @@ class EmpresaFactory extends Factory
             'correo' => $this->faker->optional()->companyEmail(),
             'avatar' => $this->faker->optional()->url(),
             'estado' => $this->faker->randomElement(['1', '0']),
-            'pais_id' => \App\Models\Erp\Pais::factory(),
+            'pais_id' => \App\Models\Workspace\Pais::factory(),
             'representante_legal' => $this->faker->name(),
         ];
     }

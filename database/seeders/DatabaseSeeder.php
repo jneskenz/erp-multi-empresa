@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Contracts\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,19 +18,21 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             // modelos
-            PaisSeeder::class,
-            EmpresaSeeder::class,
-            SedesSeeder::class,
-            LocalSeeder::class,
+            // PaisSeeder::class,
+            // EmpresaSeeder::class,
+            // SedesSeeder::class,
+            // LocalSeeder::class,
 
             // permisos
             RolePermissionSeeder::class,
-            SedesPermissionsSeeder::class,
-            LocalPermissionsSeeder::class,
-
-
-
+            // SedesPermissionsSeeder::class,
+            // LocalPermissionsSeeder::class,
+            
             SuperAdminSeeder::class, // Agregar al final para que tenga todos los roles disponibles
+
+            RolesYPermisosSeeder::class,
+            DatosDemoSeeder::class,
+
         ]);
         
     }
