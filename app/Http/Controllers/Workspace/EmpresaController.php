@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Erp;
+namespace App\Http\Controllers\Workspace;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Erp\EmpresaRequest;
-use App\Models\Erp\Empresa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Workspace\Empresa;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Workspace\EmpresaRequest;
 
 class EmpresaController extends Controller
 {

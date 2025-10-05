@@ -2,6 +2,8 @@
 
 namespace App\Models\Workspace;
 
+use App\Models\GrupoEmpresa;
+use App\Models\User;
 use App\Models\Workspace\Local;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

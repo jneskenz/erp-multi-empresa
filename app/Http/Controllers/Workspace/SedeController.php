@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Erp;
+namespace App\Http\Controllers\Workspace;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Erp\SedeRequest;
-use App\Models\Erp\Empresa;
-use App\Models\Erp\Sede;
+use App\Http\Requests\Workspace\SedeRequest;
+use App\Models\Workspace\Empresa;
+use App\Models\Workspace\Sede;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

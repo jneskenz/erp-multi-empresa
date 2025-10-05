@@ -1,17 +1,29 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| Directorios de rutas por apps: Workspace, CRM, ERP, etc.
+| Models: App\Models\Workspace\Empresa, App\Models\Workspace\Sede, etc.
+| Middleware: grupo.access, empresa.access, rol.administrador
+| Controllers: App\Http\Controllers\Workspace\Grupo\..., App\Http\Controllers\Workspace\Empresa\..
+| Views: resources\views\apps\workspace\empresa\..., resources\views\apps\workspace\grupo\...
+| Views: resources\views\apps\erp\dashboard\..., resources\views\apps\erp\ventas\...
+|--------------------------------------------------------------------------
+*/
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\GrupoEmpresaController as AdminGrupoController;
-use App\Http\Controllers\Grupo\GrupoDashboardController;
-use App\Http\Controllers\Grupo\EmpresaController;
-use App\Http\Controllers\Grupo\SedeController;
-use App\Http\Controllers\Grupo\LocalController;
-use App\Http\Controllers\Grupo\UsuarioController;
-use App\Http\Controllers\Empresa\EmpresaDashboardController;
+use App\Http\Controllers\Workspace\GrupoDashboardController;
+use App\Http\Controllers\Workspace\EmpresaController;
+use App\Http\Controllers\Workspace\SedeController;
+use App\Http\Controllers\Workspace\LocalController;
+use App\Http\Controllers\Workspace\UsuarioController;
+use App\Http\Controllers\Erp\EmpresaDashboardController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +109,8 @@ Route::prefix('{grupo}')
     ->name('grupo.')
     ->middleware(['auth', 'grupo.access', 'rol.administrador'])
     ->group(function () {
+
+        Log::info('Acceso al panel del grupo: ' . request()->route('grupo'));
         
         // Dashboard del grupo
         Route::get('/', [GrupoDashboardController::class, 'index'])->name('dashboard');
@@ -115,16 +129,16 @@ Route::prefix('{grupo}')
         Route::resource('locales', LocalController::class);
         Route::post('locales/{local}/activar', [LocalController::class, 'activar'])->name('locales.activar');
         
-        // Gestión de usuarios del grupo
-        Route::resource('usuarios', UsuarioController::class);
-        Route::post('usuarios/{usuario}/activar', [UsuarioController::class, 'activar'])->name('usuarios.activar');
-        Route::post('usuarios/{usuario}/desactivar', [UsuarioController::class, 'desactivar'])->name('usuarios.desactivar');
-        Route::post('usuarios/{usuario}/asignar-empresa', [UsuarioController::class, 'asignarEmpresa'])->name('usuarios.asignar-empresa');
+        // // Gestión de usuarios del grupo
+        // Route::resource('usuarios', UsuarioController::class);
+        // Route::post('usuarios/{usuario}/activar', [UsuarioController::class, 'activar'])->name('usuarios.activar');
+        // Route::post('usuarios/{usuario}/desactivar', [UsuarioController::class, 'desactivar'])->name('usuarios.desactivar');
+        // Route::post('usuarios/{usuario}/asignar-empresa', [UsuarioController::class, 'asignarEmpresa'])->name('usuarios.asignar-empresa');
         
-        // Roles y permisos
-        Route::get('roles', [UsuarioController::class, 'roles'])->name('roles.index');
-        Route::post('roles', [UsuarioController::class, 'crearRol'])->name('roles.store');
-        Route::get('permisos', [UsuarioController::class, 'permisos'])->name('permisos.index');
+        // // Roles y permisos
+        // Route::get('roles', [UsuarioController::class, 'roles'])->name('roles.index');
+        // Route::post('roles', [UsuarioController::class, 'crearRol'])->name('roles.store');
+        // Route::get('permisos', [UsuarioController::class, 'permisos'])->name('permisos.index');
         
         // Configuración del grupo
         Route::get('configuracion', [GrupoDashboardController::class, 'configuracion'])->name('configuracion');

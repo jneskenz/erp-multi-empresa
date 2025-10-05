@@ -67,7 +67,8 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="{{ route('customization.index') }}" class="menu-link">
+                    <a href="" class="menu-link">
+                    {{-- <a href="{{ route('customization.index') }}" class="menu-link"> --}}
                         <div data-i18n="Container">Personalización</div>
                     </a>
                 </li>
@@ -158,9 +159,10 @@
 
         {{-- Config. administrativa --}}
 
-        @superadmin
+        {{-- @superadmin --}}
             <li class="menu-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.logs.index') }}" class="menu-link">
+                <a href="" class="menu-link">
+                {{-- <a href="{{ route('admin.logs.index') }}" class="menu-link"> --}}
                     <i class="menu-icon tf-icons ti ti-bug"></i>
                     <div data-i18n="Analytics">Logs System</div>
                     <div class="badge text-bg-danger rounded-pill ms-auto" id="errorCount" style="display: none;">
@@ -168,7 +170,7 @@
                     </div>
                 </a>
             </li>
-        @endsuperadmin
+        {{-- @endsuperadmin --}}
 
         <!-- Módulos del ERP -->
         <li class="menu-header small text-uppercase">

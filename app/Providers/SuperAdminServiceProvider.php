@@ -21,11 +21,11 @@ class SuperAdminServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Interceptar todas las verificaciones de permisos para superadministradores
-        Gate::before(function ($user, $ability) {
-            // Si el usuario es superadministrador, permitir todo
-            if ($user && $user->isSuperAdmin()) {
-                return true;
-            }
-        });
+        // Gate::before(function ($user, $ability) {
+        //     // Si el usuario es superadministrador, permitir todo
+        //     if ($user && $user->isSuperAdmin()) {
+        //         return true;
+        //     }
+        // });
     }
 }

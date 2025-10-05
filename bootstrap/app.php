@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'superusuario' => \App\Http\Middleware\VerificarSuperusuario::class,
             'grupo.access' => \App\Http\Middleware\VerificarAccesoGrupo::class,
             'empresa.access' => \App\Http\Middleware\VerificarAccesoEmpresa::class,
-            // 'rol.administrador' => \App\Http\Middleware\VerificarRolAdministrador::class,
+            'rol.administrador' => \App\Http\Middleware\VerificarRolAdministrador::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

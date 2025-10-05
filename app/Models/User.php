@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Workspace\Empresa;
+use App\Models\Workspace\Local;
+use App\Models\Workspace\Sede;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
