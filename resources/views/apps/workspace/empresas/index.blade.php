@@ -105,7 +105,7 @@
                                         </select>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class="btn btn-label-primary">
                                             <i class="ti ti-search me-1"></i>
                                             Buscar
                                         </button>
@@ -200,11 +200,11 @@
                                             <td class="text-center" >
                                                 @if ($empresa->activo)
                                                 {{-- tooltip --}}
-                                                <span title="Activa" data-bs-toggle="tooltip" class="badge badge-center rounded-pill bg-label-success bg-glow">
+                                                <span title="Activa" data-bs-toggle="tooltip" data-bs-placement="top" class="badge badge-center rounded-pill bg-label-success bg-glow">
                                                     <i class="ti ti-check"></i>
                                                 </span>
                                                 @else
-                                                <span title="Inactiva" data-bs-toggle="tooltip" class="badge badge-center rounded-pill bg-label-danger bg-glow">
+                                                <span title="Inactiva" data-bs-toggle="tooltip" data-bs-placement="top" class="badge badge-center rounded-pill bg-label-danger bg-glow">
                                                     <i class="ti ti-circle-x"></i>
                                                 </span>
                                                 @endif

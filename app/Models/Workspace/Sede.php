@@ -50,7 +50,21 @@ class Sede extends Model
      */
     public function locales()
     {
-        return $this->hasMany(Local::class);
+        return $this->hasMany(Local::class, 'sede_id');
+    }
+
+    /**
+     * Relación indirecta con Empresas a través de Locales y empresa_local
+     * Una sede puede tener múltiples empresas operando en sus locales
+     */
+    public function empresas()
+    {
+        // Obtener empresas que operan en algún local de esta sede
+        return Empresa::whereHas('locales', function($query) {
+            $query->whereHas('sede', function($sedeQuery) {
+                $sedeQuery->where('sedes.id', $this->id);
+            });
+        });
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -88,11 +88,38 @@ class Empresa extends Model
     }
 
     /**
-     * Locales de la empresa
+     * Relación muchos-a-muchos con Locales
+     * Una empresa puede operar en múltiples locales
+     * Múltiples empresas pueden operar en el mismo local
      */
-    public function locales(): HasMany
+    public function locales()
     {
-        return $this->hasMany(Local::class, 'empresa_id');
+        return $this->belongsToMany(
+            Local::class,
+            'empresa_local',
+            'empresa_id',
+            'local_id'
+        )->withPivot(['fecha_inicio', 'fecha_fin', 'es_principal', 'activo'])
+         ->withTimestamps();
+    }
+
+    /**
+     * Relación indirecta con Sedes a través de Locales
+     * Una empresa puede operar en múltiples sedes
+     */
+    public function sedes()
+    {
+        return $this->hasManyThrough(
+            Sede::class,
+            Local::class,
+            'id',          // FK en tabla local
+            'id',          // FK en tabla sede
+            'id',          // PK en tabla empresa
+            'sede_id'      // FK en tabla local que apunta a sede
+        )->join('empresa_local', function($join) {
+            $join->on('empresa_local.local_id', '=', 'locales.id')
+                 ->where('empresa_local.empresa_id', '=', $this->id);
+        })->distinct();
     }
 
     /**

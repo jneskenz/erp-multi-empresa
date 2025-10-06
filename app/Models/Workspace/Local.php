@@ -16,25 +16,26 @@ class Local extends Model
     protected $table = 'locales';
 
     protected $fillable = [
+        'grupo_empresa_id',
+        'sede_id',
+        'nombre',
+        'slug',
         'codigo',
+        'descripcion',
+        'tipo',
         'direccion',
+        'referencia',
+        'latitud',
+        'longitud',
         'email',
         'telefono',
         'whatsapp',
-        'estado',
-        'sede_id',
-        'user_uuid',
-        'grupo_empresa_id',
-        'empresa_id',
-        'sede_id',
-        'estado',
-        'descripcion',
-        'nombre',
-        'slug',
-        'tipo',
-        'referencia',
+        'responsable_id',
         'horarios',
-
+        'capacidad_personas',
+        'area_m2',
+        'activo',
+        'estado',
     ];
 
     protected $casts = [
@@ -44,14 +45,44 @@ class Local extends Model
         'deleted_at' => 'datetime',
     ];
 
-    /*
-    * Relacion: Local pertenece a una Sede
-    */
+    // ==================== RELACIONES ====================
+    
+    /**
+     * Relación con GrupoEmpresa
+     * Un local pertenece a un grupo empresarial
+     */
+    public function grupoEmpresa()
+    {
+        return $this->belongsTo(\App\Models\GrupoEmpresa::class, 'grupo_empresa_id');
+    }
+
+    /**
+     * Relación con Sede
+     * Un local pertenece a una sede (ubicación física dentro del grupo)
+     */
     public function sede()
     {
         return $this->belongsTo(Sede::class, 'sede_id');
     }
 
+    /**
+     * Relación muchos-a-muchos con Empresas
+     * Un local puede tener múltiples empresas operando en él
+     * Múltiples empresas pueden compartir el mismo local
+     */
+    public function empresas()
+    {
+        return $this->belongsToMany(
+            Empresa::class,
+            'empresa_local',
+            'local_id',
+            'empresa_id'
+        )->withPivot(['fecha_inicio', 'fecha_fin', 'es_principal', 'activo'])
+         ->withTimestamps();
+    }
+
+    // ==================== SCOPES ====================
+    
     /**
      * Scope para filtrar locales activos
      */

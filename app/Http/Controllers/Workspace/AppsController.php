@@ -70,15 +70,15 @@ class AppsController extends Controller
                 'activa' => false,
                 'ruta_base' => '/rrhh'
             ],
-            [
-                'id' => 'web',
-                'nombre' => 'Web',
-                'descripcion' => 'Sitio Web Corporativo',
-                'icono' => 'ti ti-world',
-                'color' => 'info',
-                'activa' => false,
-                'ruta_base' => '/web'
-            ],
+            // [
+            //     'id' => 'web',
+            //     'nombre' => 'Web',
+            //     'descripcion' => 'Sitio Web Corporativo',
+            //     'icono' => 'ti ti-world',
+            //     'color' => 'info',
+            //     'activa' => false,
+            //     'ruta_base' => '/web'
+            // ],
             [
                 'id' => 'ecommerce',
                 'nombre' => 'E-Commerce',
