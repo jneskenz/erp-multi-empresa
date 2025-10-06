@@ -1,14 +1,14 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-erp')
 
 @section('title', 'Editar Sede - ERP Multisoft')
 
 @php
 
-    $dataBreadcrumb = [
+    $breadcrumbs = [
         'title' => 'Gestión de Sedes',
         'description' => '',
         'icon' => 'ti ti-building-bank',
-        'breadcrumbs' => [
+        'items' => [
             ['name' => 'Config. Administrativa', 'url' => route('home')],
             ['name' => 'Sedes', 'url' => route('sedes.index')],
             ['name' => 'Editar sede', 'url' => 'javascript:void(0)', 'active' => true],
@@ -25,46 +25,40 @@
         ],
     ];
 
-    $dataHeaderCard = [
-        'title' => 'Editando la sede',
-        'description' => $sede->nombre,
-        'textColor' => 'text-warning',
-        'icon' => 'ti ti-edit',
-        'iconColor' => 'bg-label-warning',        
-        'actions' => [
-            [
-                'typeAction' => 'btnInfo',
-                'name' => $sede->estado == 1 ? 'ACTIVO' : 'SUSPENDIDO',
-                'url' => '#',
-                'icon' => $sede->estado == 1 ? 'ti ti-check' : 'ti ti-x',
-                'permission' => null,
-                'typeButton' => $sede->estado == 1 ? 'btn-label-success' : 'btn-label-danger',
-            ],
-            [
-                'typeAction' => 'btnLink',
-                'name' => 'Ver detalle',
-                'url' => route('sedes.show', $sede),
-                'typeButton' => 'btn-info',
-                'icon' => 'ti ti-list-search',
-                'permission' => 'sedes.view'
-            ],
-            
-        ],
-    ];
-
 @endphp
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <!-- Breadcrumb Component -->
-        @include('layouts.vuexy.breadcrumb', $dataBreadcrumb)
+        <x-erp.breadcrumbs :items="$breadcrumbs">
+            <x-slot:extra>
+                @can('sedes.view')
+                <a href="{{ route('sedes.index') }}" class="btn btn-label-dark waves-effect">
+                    <i class="ti ti-arrow-left me-2"></i>
+                    Regresar
+                </a>
+                @endcan
+            </x-slot:extra>
+        </x-erp.breadcrumbs>
 
         <div class="row">
             <div class="col-lg-12 mx-auto">
                 <div class="card">
 
-
-                    @include('layouts.vuexy.header-card', $dataHeaderCard)
+                    <x-erp.card-header 
+                        title="Editando la sede" 
+                        description="{{ $sede->nombre }}"
+                        textColor="text-warning"
+                        icon="ti ti-edit"
+                        iconColor="bg-warning"
+                    >
+                        @can('sedes.view')
+                            <a href="{{ route('sedes.show', $sede) }}" class="btn btn-info waves-effect">
+                                <i class="ti ti-list-search me-2"></i>
+                                Ver detalle
+                            </a>                        
+                        @endcan
+                    </x-erp.card-header>
 
                     @if(session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">

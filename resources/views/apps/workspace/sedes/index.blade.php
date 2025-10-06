@@ -1,51 +1,18 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-ws')
 
 @section('title', 'Gestión de Sedes - ERP Multisoft')
 
 @php
 
-    $dataBreadcrumb = [
+    $breadcrumbs = [
         'title' => 'Gestión de Sede',
         'description' => 'Administra las sedes del sistema',
         'icon' => 'ti ti-building-bank',
-        'breadcrumbs' => [
-            ['name' => 'Config. Administrativa', 'url' => route('home')],
-            ['name' => 'Sedes', 'url' => route('sedes.index'), 'active' => true],
-        ],
-        'stats' => [
-            [
-                'name' => 'Total Sedes',
-                'value' => $sedes->count(),
-                'icon' => 'ti ti-building',
-                'color' => 'bg-label-primary',
-            ],
-            [
-                'name' => 'Sedes Activas',
-                'value' => $sedes->where('estado', true)->count(),
-                'icon' => 'ti ti-circle-check',
-                'color' => 'bg-label-success',
-            ],
+        'items' => [
+            ['name' => 'Config. Administrativa', 'url' => 'javascript:void(0);'],
+            ['name' => 'Sedes', 'url' => 'javascript:void(0);'],
         ],
     ];
-
-    $dataHeaderCard = [
-        'title' => 'Lista de Sedes',
-        'description' => '',
-        'textColor' => 'text-primary',
-        'icon' => 'ti ti-building-bank',
-        'iconColor' => 'bg-label-primary',
-        'actions' => [
-            [
-                'typeAction' => 'btnLink', // btnIdEvent, btnLink, btnToggle, btnInfo
-                'typeButton' => 'btn-primary', // btn-primary, btn-info, btn-success, btn-danger, btn-warning, btn-secondary
-                'name' => 'Crear Sede',
-                'url' => route('sedes.create'),
-                'icon' => 'ti ti-plus',
-                'permission' => 'sedes.create',
-            ],
-        ],
-    ];
-
 
 @endphp
 
@@ -53,8 +20,26 @@
 @section('content')
 
     <div class="container-xxl flex-grow-1 container-p-y">
+        
+        <x-workspace.breadcrumbs :items="$breadcrumbs">
 
-        @include('layouts.vuexy.breadcrumb', $dataBreadcrumb)
+            <x-slot:extra>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-label-primary me-2">
+                        <i class="ti ti-building-bank"></i>
+                    </span>
+                    <span class="text-muted">Total Sedes: {{ $sedes->count() }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-label-success me-2">
+                        <i class="ti ti-circle-check"></i>
+                    </span>
+                    <span class="text-muted">Sedes Activas: {{ $sedes->where('estado', true)->count() }}</span>
+                </div>
+            </x-slot:extra>
+
+        </x-workspace.breadcrumbs>
+
 
         <div class="row">
             <div class="col-12">
@@ -64,7 +49,7 @@
                         <div class="nav-align-top">
                             <ul class="nav nav-pills flex-column flex-md-row">
                                 <li class="nav-item mb-2 mb-md-0 me-0 me-md-3">
-                                    <a class="nav-link border" href="{{ route('empresas.index') }}">
+                                    <a class="nav-link border" href="{{ route('grupo.empresas.index', ['grupo' => $grupoActual ?? request()->input('grupo')]) }}">
                                         <i class="ti-xs ti ti-building me-1"></i>
                                         Empresas
                                     </a>
@@ -76,7 +61,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item mb-2 mb-md-0 me-0 me-md-3">
-                                    <a class="nav-link border" href="pages-account-settings-billing.html">
+                                    <a class="nav-link border" href="{{ route('grupo.locales.index', ['grupo' => $grupoActual ?? request()->input('grupo')]) }}">
                                         <i class="ti-xs ti ti-building-store me-1"></i>
                                         Locales
                                     </a>
@@ -85,11 +70,24 @@
                         </div>
                     </div>
 
-                    @include('layouts.vuexy.header-card', $dataHeaderCard)
+                    <x-workspace.card-header 
+                        title="Lista de Sedes" 
+                        description=""
+                        textColor="text-primary"
+                        icon="ti ti-building-bank"
+                        iconColor="bg-label-primary"
+                    >
+                        @can('crear_sedes')
+                            <a href="{{ route('grupo.sedes.create', ['grupo' => $grupoActual ?? request()->input('grupo')]) }}" class="btn btn-primary waves-effect">
+                                <i class="ti ti-plus me-2"></i>
+                                Crear Sede
+                            </a>
+                        @endcan
+                    </x-workspace.card-header>
 
                     <div class="card-body">
                         <!-- Componente Livewire con estilo Vuexy -->
-                        @livewire('erp.sedes-data-table')
+                        @livewire('workspace.sedes-data-table', ['grupoSlug' => $grupoActual->slug])
                     </div>
                 </div>
             </div>

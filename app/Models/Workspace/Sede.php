@@ -2,6 +2,7 @@
 
 namespace App\Models\Workspace;
 
+use App\Models\GrupoEmpresa;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Fluent\Concerns\Has;
@@ -32,13 +33,24 @@ class Sede extends Model
         'activo',
         'es_principal',
         'grupo_empresa_id',
-
     ];
 
-    // Relación con el modelo Empresa
-    public function empresa()
+    /**
+     * Relación con GrupoEmpresa
+     * Una sede pertenece a un grupo empresarial
+     */
+    public function grupoEmpresa()
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->belongsTo(GrupoEmpresa::class, 'grupo_empresa_id');
+    }
+
+    /**
+     * Relación con Locales
+     * Una sede puede tener muchos locales
+     */
+    public function locales()
+    {
+        return $this->hasMany(Local::class);
     }
 
     public function getActivitylogOptions(): LogOptions

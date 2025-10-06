@@ -16,6 +16,19 @@ class EmpresaRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     * Mapea 'numerodocumento' del formulario a 'ruc' de la base de datos
+     */
+    // protected function prepareForValidation(): void
+    // {
+    //     if ($this->has('numerodocumento')) {
+    //         $this->merge([
+    //             'ruc' => $this->input('numerodocumento'),
+    //         ]);
+    //     }
+    // }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -25,22 +38,24 @@ class EmpresaRequest extends FormRequest
 
         
         $empresaId = $this->route('empresa') ? $this->route('empresa')->id : null;
+        
         Log::info('Validando datos de empresa');
 
         return [
-            'numerodocumento' => [
+            
+            'ruc' => [
                 'required',
                 'string',
-                'max:20',
-                'unique:empresas,numerodocumento,' . $empresaId,
-            ],
-            'razon_social' => [
-                'required',
-                'string',
-                'max:100',
+                'max:11',
+                'unique:empresas,ruc,' . $empresaId,
             ],
             'nombre_comercial' => [
                 'nullable',
+                'string',
+                'max:100',
+            ],
+            'razon_social' => [
+                'required',
                 'string',
                 'max:100',
             ],
@@ -54,7 +69,7 @@ class EmpresaRequest extends FormRequest
                 'string',
                 'max:20',
             ],
-            'correo' => [
+            'email' => [
                 'nullable',
                 'string',
                 'max:100',
@@ -65,7 +80,7 @@ class EmpresaRequest extends FormRequest
                 'string',
                 'max:200',
             ],
-            'estado' => [
+            'activo' => [
                 'required',
                 'boolean',
             ],
@@ -73,6 +88,23 @@ class EmpresaRequest extends FormRequest
                 'nullable',
                 'exists:paises,id',
             ],
+            // Logo SVG
+            'logo' => [
+                'nullable',
+                'file',
+                'mimes:svg',
+                'max:2048', // 2MB en kilobytes
+            ],
+            // Favicon
+            'favicon' => [
+                'nullable',
+                'file',
+                'mimes:ico,png,svg',
+                'max:1024', // 1MB en kilobytes
+            ],
+            // Checkboxes de eliminación (solo en update)
+            'remove_logo' => 'nullable|boolean',
+            'remove_favicon' => 'nullable|boolean',
         ];
         
     }
@@ -85,10 +117,10 @@ class EmpresaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'numerodocumento.required' => 'El número de documento es obligatorio.',
-            'numerodocumento.string' => 'El número de documento debe ser una cadena de texto.',
-            'numerodocumento.max' => 'El número de documento no debe exceder :max caracteres.',
-            'numerodocumento.unique' => 'El número de documento ya está en uso.',
+            'ruc.required' => 'El número de documento es obligatorio.',
+            'ruc.string' => 'El número de documento debe ser una cadena de texto.',
+            'ruc.max' => 'El número de documento no debe exceder :max caracteres.',
+            'ruc.unique' => 'El número de documento ya está en uso.',
             'razon_social.required' => 'La razón social es obligatoria.',
             'razon_social.string' => 'La razón social debe ser una cadena de texto.',
             'razon_social.max' => 'La razón social no debe exceder :max caracteres.',
@@ -106,6 +138,13 @@ class EmpresaRequest extends FormRequest
             'estado.required' => 'El estado es obligatorio.',
             'estado.boolean' => 'El estado debe ser verdadero o falso.',
             'pais_id.exists' => 'El país seleccionado no es válido.',
+            // Mensajes para logo y favicon
+            'logo.file' => 'El logo debe ser un archivo.',
+            'logo.mimes' => 'El logo debe ser un archivo SVG.',
+            'logo.max' => 'El logo no debe ser mayor a 2MB.',
+            'favicon.file' => 'El favicon debe ser un archivo.',
+            'favicon.mimes' => 'El favicon debe ser ICO, PNG o SVG.',
+            'favicon.max' => 'El favicon no debe ser mayor a 1MB.',
         ];
     }
 

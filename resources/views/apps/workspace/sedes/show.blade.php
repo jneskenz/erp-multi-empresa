@@ -1,13 +1,13 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-erp')
 
 @section('title', $sede->nombre . ' - Detalles de Sede')
 
 @php
-    $dataBreadcrumb = [
+    $breadcrumbs = [
         'title' => 'Gestión de Sedes',
         'description' => 'Información completa de la sede',
         'icon' => 'ti ti-building-bank',
-        'breadcrumbs' => [
+        'items' => [
             ['name' => 'Config. Administrativa', 'url' => route('home')],
             ['name' => 'Sedes', 'url' => route('sedes.index')],
             ['name' => 'Detalle sede', 'url' => route('sedes.show', $sede), 'active' => true],
@@ -68,37 +68,37 @@
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <!-- Breadcrumb Component -->
-        @include('layouts.vuexy.breadcrumb', $dataBreadcrumb)
+        <x-erp.breadcrumbs :items="$breadcrumbs">
+            <x-slot:extra>
+                @can('sedes.view')
+                <a href="{{ route('sedes.index') }}" class="btn btn-label-dark waves-effect">
+                    <i class="ti ti-arrow-left me-2"></i>
+                    Regresar
+                </a>
+                @endcan
+            </x-slot:extra>
+        </x-erp.breadcrumbs>
 
         <div class="row">
             {{-- Información Principal --}}
             <div class="col-lg-8">
                 <div class="card mb-4">
 
-                    @include('layouts.vuexy.header-card', $dataHeaderCard)
-
-                    {{-- <div class="card-header d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar avatar-lg me-3">
-                                <span class="avatar-initial rounded-circle bg-label-primary">
-                                    <i class="ti ti-building-bank" style="font-size: 1.5rem;"></i>
-                                </span>
-                            </div>
-                            <div>
-                                <h4 class="mb-1">{{ $sede->nombre }}</h4>
-                                <p class="mb-0 text-muted">
-                                    <i class="ti ti-building me-1"></i>
-                                    {{ $sede->empresa->nombre_comercial ?? $sede->empresa->razon_social }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-{{ $sede->estado ? 'success' : 'danger' }} fs-6 px-3 py-2">
-                                <i class="ti ti-{{ $sede->estado ? 'check' : 'x' }} me-1"></i>
-                                {{ $sede->estado ? 'Activo' : 'Inactivo' }}
-                            </span>
-                        </div>
-                    </div> --}}
+                    <x-erp.card-header 
+                        title="Información de la sedes" 
+                        description="{{ $sede->nombre_comercial ?? $sede->razon_social }}"
+                        textColor="text-info"
+                        icon="ti ti-list-search"
+                        iconColor="bg-label-info"
+                        estado="{{ $sede->estado }}"
+                    >                        
+                        @can('sedes.edit')
+                            <a href="{{ route('sedes.edit', $sede) }}" class="btn btn-primary waves-effect">
+                                <i class="ti ti-edit me-2"></i>
+                                Editar Sede
+                            </a>                        
+                        @endcan
+                    </x-erp.card-header>
 
                     <div class="card-body">
                         {{-- Información Básica --}}
@@ -373,45 +373,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
 @push('styles')
 <style>
-.avatar-lg {
-    width: 60px;
-    height: 60px;
-}
+    .avatar-lg {
+        width: 60px;
+        height: 60px;
+    }
 
-.avatar-lg .avatar-initial {
-    font-size: 1.5rem;
-    line-height: 60px;
-}
+    .avatar-lg .avatar-initial {
+        font-size: 1.5rem;
+        line-height: 60px;
+    }
 
-.avatar-xs {
-    width: 24px;
-    height: 24px;
-}
+    .avatar-xs {
+        width: 24px;
+        height: 24px;
+    }
 
-.avatar-xs .avatar-initial {
-    font-size: 10px;
-    line-height: 24px;
-}
+    .avatar-xs .avatar-initial {
+        font-size: 10px;
+        line-height: 24px;
+    }
 
-.btn-xs {
-    padding: 0.125rem 0.375rem;
-    font-size: 0.75rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-}
+    .btn-xs {
+        padding: 0.125rem 0.375rem;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+    }
 
-.text-sm {
-    font-size: 0.875rem;
-}
+    .text-sm {
+        font-size: 0.875rem;
+    }
 
-.badge-sm {
-    font-size: 0.65em;
-    padding: 0.25em 0.5em;
-}
+    .badge-sm {
+        font-size: 0.65em;
+        padding: 0.25em 0.5em;
+    }
 
-.card-body .border-bottom:last-child {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-}
+    .card-body .border-bottom:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
 </style>
 @endpush

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use App\Models\Scopes\FiltroMultiempresaScope;
 
 class GrupoEmpresa extends Model
 {
@@ -47,6 +48,13 @@ class GrupoEmpresa extends Model
         'estado' => 'activo',
     ];
 
+    // ==================== SCOPE GENERAL ====================
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new FiltroMultiempresaScope);
+    }
+    
     // ==================== BOOT ====================
     
     protected static function boot()

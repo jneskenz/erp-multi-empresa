@@ -289,9 +289,27 @@ class User extends Authenticatable
 
     /**
      * Obtener todas las empresas con acceso
+     * 
+     * Lógica:
+     * - Superusuario: todas las empresas
+     * - Propietario/Admin General: todas las empresas de su grupo
+     * - Usuarios operativos: solo empresas asignadas
      */
     public function getEmpresasConAcceso()
     {
+        // Superusuario: todas las empresas del sistema
+        if ($this->esSuperusuario()) {
+            return Empresa::all();
+        }
+        
+        // Propietario o Administrador General: todas las empresas de su grupo
+        if ($this->esAdministradorGeneral() || $this->esPropietario()) {
+            if ($this->grupo_empresa_id) {
+                return Empresa::where('grupo_empresa_id', $this->grupo_empresa_id)->get();
+            }
+        }
+        
+        // Usuarios operativos: solo empresas asignadas
         $empresas = collect();
         
         // Empresa principal
@@ -299,7 +317,7 @@ class User extends Authenticatable
             $empresas->push($this->empresa);
         }
         
-        // Empresas adicionales
+        // Empresas adicionales de la relación many-to-many
         $this->empresasActivas->each(function ($empresa) use ($empresas) {
             if (!$empresas->contains('id', $empresa->id)) {
                 $empresas->push($empresa);
@@ -307,6 +325,32 @@ class User extends Authenticatable
         });
         
         return $empresas;
+    }
+    
+    /**
+     * Obtener todas las empresas con acceso de un grupo específico
+     * 
+     * @param int $grupoId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getEmpresasConAccesoDeGrupo(int $grupoId)
+    {
+        // Superusuario: todas las empresas del grupo
+        if ($this->esSuperusuario()) {
+            return Empresa::where('grupo_empresa_id', $grupoId)->get();
+        }
+        
+        // Propietario o Administrador General del grupo: todas las empresas
+        if ($this->puedeGestionarGrupo($grupoId)) {
+            return Empresa::where('grupo_empresa_id', $grupoId)->get();
+        }
+        
+        // Usuarios operativos: solo empresas asignadas del grupo
+        $empresasConAcceso = $this->getEmpresasConAcceso();
+        
+        return $empresasConAcceso->filter(function ($empresa) use ($grupoId) {
+            return $empresa->grupo_empresa_id === $grupoId;
+        });
     }
 
     /**

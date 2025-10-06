@@ -1,35 +1,17 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-erp')
 
 @section('title', 'Crear Sede - ERP Multisoft')
 
 @php
-    $dataBreadcrumb = [
+    $breadcrumbs = [
         'title' => 'Gestión de Sedes',
         'description' => 'Registra una nueva sede en el sistema',
         'icon' => 'ti ti-building-bank',
-        'breadcrumbs' => [
+        'items' => [
             ['name' => 'Config. Administrativa', 'url' => route('home')],
             ['name' => 'Sedes', 'url' => route('sedes.index')],
             ['name' => 'Crear sede', 'url' => route('sedes.create'), 'active' => true],
         ],
-        'actions' => [
-            [
-                'name' => 'Regresar',
-                'url' => route('empresas.index'),
-                'typeButton' => 'btn-label-dark',
-                'icon' => 'ti ti-arrow-left',
-                'permission' => 'empresas.view'
-            ],
-        ],
-    ];
-
-    $dataHeaderCard = [
-        'title' => 'Formulario de registro',
-        'description' => '',
-        'textColor' => 'text-info',
-        'icon' => 'ti ti-plus',
-        'iconColor' => 'bg-label-info',
-        'actions' => [],
     ];
 
 @endphp
@@ -37,13 +19,30 @@
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <!-- Breadcrumb Component -->
-        @include('layouts.vuexy.breadcrumb', $dataBreadcrumb)
+        <x-erp.breadcrumbs :items="$breadcrumbs">
+            <x-slot:extra>
+                @can('sedes.view')
+                <a href="{{ route('sedes.index') }}" class="btn btn-label-dark waves-effect">
+                    <i class="ti ti-arrow-left me-2"></i>
+                    Regresar
+                </a>
+                @endcan
+            </x-slot:extra>
+
+        </x-erp.breadcrumbs>
 
         <div class="row">
             <div class="col-lg-12 mx-auto">
                 <div class="card">
 
-                    @include('layouts.vuexy.header-card', $dataHeaderCard)
+                    <x-erp.card-header 
+                        title="Formulario de registro" 
+                        description=""
+                        textColor="text-plus"
+                        icon="ti ti-building"
+                        iconColor="bg-label-info"
+                    >
+                    </x-erp.card-header>
 
                     {{-- <div class="card-header d-flex align-items-center">
                         <i class="ti ti-building-plus me-2 text-primary"></i>

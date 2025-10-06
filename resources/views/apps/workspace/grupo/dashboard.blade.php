@@ -1,6 +1,6 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-ws')
 
-@section('title', 'Dashboard - ' . $grupo->nombre)
+@section('title', 'Dashboard - ' . $grupoActual->nombre)
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -13,17 +13,17 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <h4 class="text-white mb-1">
-                                <i class="ti ti-building-community me-2"></i>{{ $grupo->nombre }}
+                                <i class="ti ti-building-community me-2"></i>{{ $grupoActual->nombre }}
                             </h4>
-                            <p class="mb-0">{{ $grupo->razon_social ?? 'Panel de Administración del Grupo' }}</p>
+                            <p class="mb-0">{{ $grupoActual->razon_social ?? 'Panel de Administración del Grupo' }}</p>
                         </div>
                         <div class="text-end">
                             <span class="badge bg-white text-primary mb-2">
-                                <i class="ti ti-crown me-1"></i>Plan {{ ucfirst($grupo->plan_actual) }}
+                                <i class="ti ti-crown me-1"></i>Plan {{ ucfirst($grupoActual->plan_actual) }}
                             </span>
                             <p class="mb-0 small">
                                 <i class="ti ti-clock me-1"></i>
-                                {{-- {{ $grupo->diasRestantesPlan() ?? 0 }} días restantes --}}
+                                {{-- {{ $grupoActual->diasRestantesPlan() ?? 0 }} días restantes --}}
                             </p>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="card-info">
                             <p class="card-text mb-1">Empresas</p>
-                            <h4 class="mb-0">{{ $stats['empresas_activas'] }} / {{ $grupo->max_empresas }}</h4>
+                            <h4 class="mb-0">{{ $stats['empresas_activas'] }} / {{ $grupoActual->max_empresas }}</h4>
                             <small class="text-muted">{{ $stats['total_empresas'] }} totales</small>
                         </div>
                         <div class="card-icon">
@@ -59,7 +59,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="card-info">
                             <p class="card-text mb-1">Usuarios</p>
-                            <h4 class="mb-0">{{ $stats['usuarios_activos'] }} / {{ $grupo->max_usuarios }}</h4>
+                            <h4 class="mb-0">{{ $stats['usuarios_activos'] }} / {{ $grupoActual->max_usuarios }}</h4>
                             <small class="text-muted">{{ $stats['total_usuarios'] }} totales</small>
                         </div>
                         <div class="card-icon">
@@ -119,7 +119,7 @@
                     <h5 class="mb-0">
                         <i class="ti ti-building me-2"></i>Empresas del Grupo
                     </h5>
-                    <a href="{{ route('grupo.empresas.create', ['grupo' => $grupo->slug]) }}" class="btn btn-sm btn-primary">
+                    <a href="{{ route('grupo.empresas.create', ['grupo' => $grupoActual->slug]) }}" class="btn btn-sm btn-primary">
                         <i class="ti ti-plus me-1"></i>Nueva Empresa
                     </a>
                 </div>
@@ -157,16 +157,16 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('empresa.dashboard', ['grupo' => $grupo->slug, 'empresa' => $empresa->slug]) }}" 
-                                           class="btn btn-sm btn-icon btn-text-primary" title="Ver Dashboard">
+                                        <a href="{{ route('grupo.dashboard', ['grupo' => $grupoActual->slug, 'empresa' => $empresa->id]) }}" 
+                                           class="btn btn-icon btn-text-primary" title="Ver Dashboard">
                                             <i class="ti ti-dashboard"></i>
                                         </a>
-                                        <a href="{{ route('grupo.empresas.show', ['grupo' => $grupo->slug, 'empresa' => $empresa->id]) }}" 
-                                           class="btn btn-sm btn-icon btn-text-secondary" title="Ver Detalles">
+                                        <a href="{{ route('grupo.empresas.show', ['grupo' => $grupoActual->slug, 'empresa' => $empresa->id]) }}" 
+                                           class="btn btn-icon btn-text-secondary" title="Ver Detalles">
                                             <i class="ti ti-eye"></i>
                                         </a>
-                                        <a href="{{ route('grupo.empresas.edit', ['grupo' => $grupo->slug, 'empresa' => $empresa->id]) }}" 
-                                           class="btn btn-sm btn-icon btn-text-secondary" title="Editar">
+                                        <a href="{{ route('grupo.empresas.edit', ['grupo' => $grupoActual->slug, 'empresa' => $empresa->id]) }}" 
+                                           class="btn btn-icon btn-text-secondary" title="Editar">
                                             <i class="ti ti-edit"></i>
                                         </a>
                                     </td>
@@ -176,7 +176,7 @@
                                     <td colspan="5" class="text-center py-4">
                                         <i class="ti ti-building mb-2" style="font-size: 2rem;"></i>
                                         <p class="mb-2">No hay empresas registradas</p>
-                                        <a href="{{ route('grupo.empresas.create', ['grupo' => $grupo->slug]) }}" 
+                                        <a href="{{ route('grupo.empresas.create', ['grupo' => $grupoActual->slug]) }}" 
                                            class="btn btn-sm btn-primary">
                                             <i class="ti ti-plus me-1"></i>Crear Primera Empresa
                                         </a>
@@ -219,7 +219,7 @@
                         @endforelse
                     </ul>
                     <a href="" 
-                    {{-- <a href="{{ route('grupo.usuarios.index', ['grupo' => $grupo->slug]) }}"  --}}
+                    {{-- <a href="{{ route('grupo.usuarios.index', ['grupo' => $grupoActual->slug]) }}"  --}}
                        class="btn btn-sm btn-outline-primary w-100 mt-2">
                         Ver Todos los Usuarios
                     </a>

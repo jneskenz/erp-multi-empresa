@@ -65,7 +65,7 @@ class VerificarAccesoGrupo
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
          ])
-         ->log('Acceso al grupo empresarial');
+         ->log($user->name . ': Accedió al workspace de ' . $grupo->nombre);
 
       return $next($request);
    }

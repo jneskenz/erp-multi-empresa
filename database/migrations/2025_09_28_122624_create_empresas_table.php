@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('grupo_empresa_id')->constrained('grupo_empresas')->cascadeOnDelete();
             
-            $table->string('nombre', 100);
+            $table->string('nombre', 100)->nullable();
             $table->string('slug', 100);
             $table->string('ruc', 11)->unique();
             $table->string('razon_social', 200);

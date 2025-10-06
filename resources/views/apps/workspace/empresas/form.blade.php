@@ -141,7 +141,7 @@
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> {{ isset($empresa) ? 'Actualizar' : 'Guardar' }}
             </button>
-            <a href="{{ route('empresas.index') }}" class="btn btn-secondary">
+            <a href="{{ route('workspace.empresas.index', ['grupoempresa' => $grupoActual->slug ?? request()->route('grupoempresa')]) }}" class="btn btn-secondary">
                 <i class="fas fa-times"></i> Cancelar
             </a>
         </div>

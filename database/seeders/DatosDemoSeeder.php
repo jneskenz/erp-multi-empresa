@@ -9,6 +9,8 @@ use App\Models\Workspace\Sede;
 use App\Models\Workspace\Local;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatosDemoSeeder extends Seeder
 {

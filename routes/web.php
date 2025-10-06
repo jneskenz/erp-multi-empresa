@@ -22,6 +22,7 @@ use App\Http\Controllers\Workspace\LocalController;
 use App\Http\Controllers\Workspace\UsuarioController;
 use App\Http\Controllers\Erp\EmpresaDashboardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Workspace\AppsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -114,6 +115,9 @@ Route::prefix('{grupo}')
         
         // Dashboard del grupo
         Route::get('/', [GrupoDashboardController::class, 'index'])->name('dashboard');
+
+        // Apps del grupo
+        Route::get('/apps', [AppsController::class, 'index'])->name('apps');
         
         // Gestión de empresas
         Route::resource('empresas', EmpresaController::class)->except(['index']);

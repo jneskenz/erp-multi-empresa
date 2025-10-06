@@ -12,10 +12,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Empresa extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $table = 'empresas';
 
@@ -278,4 +280,30 @@ class Empresa extends Model
         
         return null;
     }
+
+    /**
+     * Opciones para activity log | Spatie
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'ruc',
+                'razon_social', 
+                'nombre_comercial',
+                'direccion',
+                'telefono',
+                'correo',
+                'estado',
+                'codigo',
+                'slug',
+                'representante_legal',
+                'grupo_empresa_id'
+            ])  // Campos a registrar
+            ->useLogName('empresa')
+            ->setDescriptionForEvent(fn(string $eventName) => "Empresa ha sido {$eventName}") // Descripción personalizada
+            ->logFillable() // Todos los campos fillable
+            ->logOnlyDirty(); // Solo cambios en fillable
+    }
+
 }

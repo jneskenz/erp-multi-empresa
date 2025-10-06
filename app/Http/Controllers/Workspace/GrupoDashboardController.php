@@ -18,46 +18,46 @@ class GrupoDashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $grupo = $request->get('grupoEmpresa');
+        $grupoActual = $request->get('grupoEmpresa');
         
-        if (!$grupo) {
+        if (!$grupoActual) {
             abort(404, 'Grupo empresarial no encontrado');
         }
         
         // Estadísticas del grupo
         $stats = [
-            'total_empresas' => $grupo->empresas()->count(),
-            'empresas_activas' => $grupo->empresas()->where('activo', true)->count(),
-            'total_usuarios' => $grupo->usuarios()->count(),
-            'usuarios_activos' => $grupo->usuarios()->where('activo', true)->count(),
-            'total_sedes' => $grupo->sedes()->count() ?? 0,
-            'total_locales' => $grupo->locales()->count() ?? 0,
+            'total_empresas' => $grupoActual->empresas()->count(),
+            'empresas_activas' => $grupoActual->empresas()->where('activo', true)->count(),
+            'total_usuarios' => $grupoActual->usuarios()->count(),
+            'usuarios_activos' => $grupoActual->usuarios()->where('activo', true)->count(),
+            'total_sedes' => $grupoActual->sedes()->count() ?? 0,
+            'total_locales' => $grupoActual->locales()->count() ?? 0,
         ];
         
         // Empresas del grupo
-        $empresas = $grupo->empresas()
+        $empresas = $grupoActual->empresas()
             ->withCount('usuarios')
             ->latest()
             ->take(10)
             ->get();
         
         // Usuarios recientes
-        $usuariosRecientes = $grupo->usuarios()
+        $usuariosRecientes = $grupoActual->usuarios()
             ->with('empresa', 'roles')
             ->latest()
             ->take(10)
             ->get();
         
-        // Actividad reciente del grupo
+        // Actividad reciente del grupoActual
         // $actividadReciente = activity()
         //     ->inLog('default')
-        //     ->where(function($query) use ($grupo) {
-        //         $query->where('subject_type', get_class($grupo))
-        //               ->where('subject_id', $grupo->id);
+        //     ->where(function($query) use ($grupoActual) {
+        //         $query->where('subject_type', get_class($grupoActual))
+        //               ->where('subject_id', $grupoActual->id);
         //     })
-        //     ->orWhere(function($query) use ($grupo) {
-        //         $query->whereHasMorph('subject', [Empresa::class], function($q) use ($grupo) {
-        //             $q->where('grupo_empresa_id', $grupo->id);
+        //     ->orWhere(function($query) use ($grupoActual) {
+        //         $query->whereHasMorph('subject', [Empresa::class], function($q) use ($grupoActual) {
+        //             $q->where('grupo_empresa_id', $grupoActual->id);
         //         });
         //     })
         //     ->with('causer')
@@ -66,13 +66,13 @@ class GrupoDashboardController extends Controller
         //     ->get();
 
         $actividadReciente = Activity::inLog('default')
-        ->where(function($query) use ($grupo) {
-            $query->where('subject_type', get_class($grupo))
-                ->where('subject_id', $grupo->id);
+        ->where(function($query) use ($grupoActual) {
+            $query->where('subject_type', get_class($grupoActual))
+                ->where('subject_id', $grupoActual->id);
         })
-        ->orWhere(function($query) use ($grupo) {
-            $query->whereHasMorph('subject', [Empresa::class], function($q) use ($grupo) {
-                $q->where('grupo_empresa_id', $grupo->id);
+        ->orWhere(function($query) use ($grupoActual) {
+            $query->whereHasMorph('subject', [Empresa::class], function($q) use ($grupoActual) {
+                $q->where('grupo_empresa_id', $grupoActual->id);
             });
         })
         ->with('causer')
@@ -81,7 +81,7 @@ class GrupoDashboardController extends Controller
         ->get();
             
         return view('apps.workspace.grupo.dashboard', compact(
-            'grupo',
+            'grupoActual',
             'stats',
             'empresas',
             'usuariosRecientes',

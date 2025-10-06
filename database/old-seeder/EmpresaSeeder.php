@@ -14,8 +14,8 @@ class EmpresaSeeder extends Seeder
     {
         $empresas = [
             [
+                'ruc' => '20123451789',
                 'nombre_comercial' => 'Empresa Ejemplo S.A.C.',
-                'numerodocumento' => '20123451789',
                 'razon_social' => 'Empresa Ejemplo Sociedad Anónima Cerrada',
                 'direccion' => 'Av. Principal 123, Lima, Lima',
                 'telefono' => '01-2345678',
@@ -24,8 +24,8 @@ class EmpresaSeeder extends Seeder
                 'estado' => '1',
             ],
             [
+                'ruc' => '20981654321',
                 'nombre_comercial' => 'Comercial Lima E.I.R.L.',
-                'numerodocumento' => '20981654321',
                 'razon_social' => 'Comercial Lima Empresa Individual de Responsabilidad Limitada',
                 'direccion' => 'Jr. Comercio 456, Lima, Lima',
                 'telefono' => '01-9876543',
@@ -34,8 +34,8 @@ class EmpresaSeeder extends Seeder
                 'estado' => '1',
             ],
             [
+                'ruc' => '20256789123',
                 'nombre_comercial' => 'Servicios Generales S.R.L.',
-                'numerodocumento' => '20256789123',
                 'razon_social' => 'Servicios Generales Sociedad de Responsabilidad Limitada',
                 'direccion' => 'Calle Los Servicios 789, San Isidro, Lima',
                 'telefono' => '01-4567891',

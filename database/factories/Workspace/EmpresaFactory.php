@@ -17,14 +17,14 @@ class EmpresaFactory extends Factory
     public function definition(): array
     {
         return [
+            'ruc' => '20' . $this->faker->unique()->numerify('#########'),
             'nombre_comercial' => $this->faker->company(),
-            'numerodocumento' => '20' . $this->faker->unique()->numerify('#########'),
             'razon_social' => $this->faker->company() . ' ' . $this->faker->randomElement(['S.A.C.', 'S.R.L.', 'E.I.R.L.']),
             'direccion' => $this->faker->address(),
             'telefono' => $this->faker->optional()->phoneNumber(),
             'correo' => $this->faker->optional()->companyEmail(),
             'avatar' => $this->faker->optional()->url(),
-            'estado' => $this->faker->randomElement(['1', '0']),
+            'activo' => $this->faker->randomElement(['1', '0']),
             'pais_id' => \App\Models\Workspace\Pais::factory(),
             'representante_legal' => $this->faker->name(),
         ];
