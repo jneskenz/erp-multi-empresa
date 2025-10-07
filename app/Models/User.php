@@ -106,7 +106,7 @@ class User extends Authenticatable
     public function empresas(): BelongsToMany
     {
         return $this->belongsToMany(Empresa::class, 'empresa_user')
-            ->withPivot(['es_principal', 'activo', 'fecha_asignacion', 'fecha_revocacion'])
+            ->withPivot(['es_principal', 'activo', 'fecha_asignacion', 'fecha_revocacion', 'created_by'])
             ->withTimestamps();
     }
 
@@ -394,6 +394,98 @@ class User extends Authenticatable
         
         $this->empresa_id = $empresaId;
         return $this->save();
+    }
+
+    /**
+     * Cambiar contexto completo (empresa y local)
+     * 
+     * Actualiza tanto la empresa como el local del contexto del usuario.
+     * Guarda el contexto en sesión para uso durante la navegación.
+     * 
+     * @param int $empresaId ID de la empresa a seleccionar
+     * @param int|null $localId ID del local (opcional)
+     * @return bool True si el cambio fue exitoso
+     */
+    public function cambiarContexto(int $empresaId, ?int $localId = null): bool
+    {
+        // Verificar acceso a la empresa
+        if (!$this->tieneAccesoAEmpresa($empresaId)) {
+            return false;
+        }
+
+        // Si se proporciona local, verificar que pertenezca a la empresa
+        if ($localId) {
+            $local = Local::find($localId);
+            
+            if (!$local) {
+                return false;
+            }
+
+            // Verificar que el local pertenezca a alguna de las empresas del usuario
+            $empresaLocal = $local->empresas()->where('empresa_id', $empresaId)->first();
+            
+            if (!$empresaLocal) {
+                return false;
+            }
+        }
+
+        // Actualizar contexto en sesión
+        session([
+            'contexto_empresa_id' => $empresaId,
+            'contexto_local_id' => $localId,
+        ]);
+
+        // Actualizar empresa principal si el usuario lo desea
+        // (esto es opcional, depende de la lógica de negocio)
+        $this->empresa_id = $empresaId;
+        $this->local_id = $localId;
+        
+        return $this->save();
+    }
+
+    /**
+     * Obtener el contexto actual del usuario desde la sesión
+     * 
+     * @return array ['empresa_id' => int|null, 'local_id' => int|null]
+     */
+    public function getContextoActual(): array
+    {
+        return [
+            'empresa_id' => session('contexto_empresa_id', $this->empresa_id),
+            'local_id' => session('contexto_local_id', $this->local_id),
+        ];
+    }
+
+    /**
+     * Obtener la empresa del contexto actual
+     * 
+     * @return Empresa|null
+     */
+    public function getEmpresaContexto(): ?Empresa
+    {
+        $contexto = $this->getContextoActual();
+        
+        if (!$contexto['empresa_id']) {
+            return null;
+        }
+
+        return Empresa::find($contexto['empresa_id']);
+    }
+
+    /**
+     * Obtener el local del contexto actual
+     * 
+     * @return Local|null
+     */
+    public function getLocalContexto(): ?Local
+    {
+        $contexto = $this->getContextoActual();
+        
+        if (!$contexto['local_id']) {
+            return null;
+        }
+
+        return Local::find($contexto['local_id']);
     }
 
     /**

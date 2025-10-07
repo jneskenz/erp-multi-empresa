@@ -136,7 +136,7 @@ class Empresa extends Model
     public function usuariosMultiples(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'empresa_user')
-            ->withPivot(['es_principal', 'activo', 'fecha_asignacion', 'fecha_revocacion'])
+            ->withPivot(['es_principal', 'activo', 'fecha_asignacion', 'fecha_revocacion', 'created_by'])
             ->withTimestamps();
     }
 
@@ -146,6 +146,14 @@ class Empresa extends Model
     public function usuariosActivos(): BelongsToMany
     {
         return $this->usuariosMultiples()->wherePivot('activo', true);
+    }
+
+    /**
+     * Locales activos de la empresa
+     */
+    public function localesActivos(): BelongsToMany
+    {
+        return $this->locales()->wherePivot('activo', true);
     }
 
     // ==================== SCOPES ====================
@@ -204,6 +212,70 @@ class Empresa extends Model
     }
 
     /**
+     * Verificar si la empresa tiene acceso a un local específico
+     * 
+     * @param int $localId ID del local a verificar
+     * @return bool True si la empresa opera en ese local
+     */
+    public function tieneLocal(int $localId): bool
+    {
+        return $this->localesActivos()
+            ->where('locales.id', $localId)
+            ->exists();
+    }
+
+    /**
+     * Obtener todos los usuarios activos de la empresa
+     * 
+     * Incluye tanto usuarios directamente asignados como usuarios
+     * de la relación many-to-many activos.
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUsuariosActivos()
+    {
+        // Usuarios de la relación many-to-many activos
+        $usuariosMultiples = $this->usuariosActivos()->get();
+        
+        // Usuarios directamente asignados activos
+        $usuariosDirectos = $this->usuarios()
+            ->where('activo', true)
+            ->get();
+        
+        // Combinar y eliminar duplicados
+        return $usuariosMultiples->concat($usuariosDirectos)->unique('id');
+    }
+
+    /**
+     * Obtener locales activos de la empresa
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getLocalesActivos()
+    {
+        return $this->localesActivos()->get();
+    }
+
+    /**
+     * Verificar si un usuario tiene acceso a la empresa
+     * 
+     * @param User $usuario Usuario a verificar
+     * @return bool True si el usuario tiene acceso
+     */
+    public function tieneUsuario(User $usuario): bool
+    {
+        // Usuario asignado directamente
+        if ($usuario->empresa_id === $this->id) {
+            return true;
+        }
+        
+        // Usuario en relación múltiple activo
+        return $this->usuariosActivos()
+            ->where('users.id', $usuario->id)
+            ->exists();
+    }
+
+    /**
      * Obtener configuración visual con cascada
      */
     public function getConfiguracionVisual(): array
@@ -219,8 +291,13 @@ class Empresa extends Model
 
     /**
      * Asignar usuario a la empresa
+     * 
+     * @param User $usuario Usuario a asignar
+     * @param bool $esPrincipal Si es la empresa principal del usuario
+     * @param User|null $creadoPor Usuario que realiza la asignación (para auditoría)
+     * @return bool True si se asignó exitosamente
      */
-    public function asignarUsuario(User $usuario, bool $esPrincipal = false): bool
+    public function asignarUsuario(User $usuario, bool $esPrincipal = false, ?User $creadoPor = null): bool
     {
         // Verificar si ya existe la relación
         if ($this->usuariosMultiples()->where('user_id', $usuario->id)->exists()) {
@@ -231,6 +308,7 @@ class Empresa extends Model
             'es_principal' => $esPrincipal,
             'activo' => true,
             'fecha_asignacion' => now(),
+            'created_by' => $creadoPor ? $creadoPor->id : auth()->id(),
         ]);
         
         // Si es principal, actualizar el usuario
@@ -241,8 +319,12 @@ class Empresa extends Model
         
         activity()
             ->performedOn($this)
-            ->causedBy($usuario)
-            ->withProperties(['empresa' => $this->nombre])
+            ->causedBy($creadoPor ?? auth()->user())
+            ->withProperties([
+                'empresa' => $this->nombre,
+                'usuario_asignado' => $usuario->name,
+                'es_principal' => $esPrincipal,
+            ])
             ->log('Usuario asignado a empresa');
         
         return true;

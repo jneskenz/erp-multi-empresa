@@ -47,6 +47,40 @@ Auth::routes();
 // Logout adicional
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Home temporal después de login
+Route::get('/home', function () {
+    return view('home');
+})->middleware('auth')->name('home');
+
+/*
+|--------------------------------------------------------------------------
+| Gestión de Contexto Multiempresa
+|--------------------------------------------------------------------------
+| Selector y cambio de contexto de empresa y local
+*/
+
+// use App\Http\Controllers\ContextoController;
+
+// Route::middleware(['auth'])->prefix('contexto')->name('contexto.')->group(function () {
+//     // Selector de contexto (empresa y local)
+//     Route::get('/selector', [ContextoController::class, 'selector'])->name('selector');
+    
+//     // Cambiar contexto
+//     Route::post('/cambiar', [ContextoController::class, 'cambiar'])->name('cambiar');
+    
+//     // Limpiar contexto
+//     Route::post('/limpiar', [ContextoController::class, 'limpiar'])->name('limpiar');
+    
+//     // Cambio rápido de empresa (sin pasar por selector)
+//     Route::post('/cambio-rapido', [ContextoController::class, 'cambioRapido'])->name('cambio-rapido');
+    
+//     // AJAX: Obtener locales de una empresa
+//     Route::get('/locales', [ContextoController::class, 'getLocales'])->name('locales');
+    
+//     // AJAX: Obtener contexto actual
+//     Route::get('/actual', [ContextoController::class, 'getContextoActual'])->name('actual');
+// });
+
 /*
 |--------------------------------------------------------------------------
 | Redireccionamiento Post-Login
@@ -110,8 +144,6 @@ Route::prefix('{grupo}')
     ->name('grupo.')
     ->middleware(['auth', 'grupo.access', 'rol.administrador'])
     ->group(function () {
-
-        Log::info('Acceso al panel del grupo: ' . request()->route('grupo'));
         
         // Dashboard del grupo
         Route::get('/', [GrupoDashboardController::class, 'index'])->name('dashboard');

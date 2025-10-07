@@ -2,7 +2,8 @@
     <div class="app-brand demo">
         <a href="{{ route('home') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
-                <img src="{{ $grupoActual->avatar_url ?? asset('vuexy/img/logo/logo.png') }}" alt="Logo" style="max-width: 24px; max-height: 24px;">
+                <img src="{{ $grupoActual->avatar_url ?? asset('vuexy/img/logo/logo.png') }}" alt="Logo"
+                    style="max-width: 24px; max-height: 24px;">
             </span>
             <span class="app-brand-text demo menu-text fw-bolder ms-2">{{ config('app.name') }}</span>
         </a>
@@ -37,9 +38,9 @@
 
         <!-- Gestión de Usuarios -->
         {{-- @canany(['users.view', 'roles.view']) --}}
-            <li class="menu-header small text-uppercase">
-                <span class="menu-header-text">CONTROL ADMINISTRATIVO </span>
-            </li>
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">CONTROL ADMINISTRATIVO </span>
+        </li>
         {{-- @endcanany --}}
 
         {{-- Config. del sistema --}}
@@ -49,7 +50,7 @@
                 <div data-i18n="Layouts">Config. del sistema</div>
             </a>
 
-            <ul class="menu-sub">                
+            <ul class="menu-sub">
                 <li class="menu-item">
                     {{-- <a href="{{ route('workspace.customization.index', ['grupoempresa' => $grupoActual->slug]) }}" class="menu-link"> --}}
                     <a href="" class="menu-link">
@@ -138,159 +139,159 @@
                 @endcan
                 {{-- acceso solo para superadmin con medelwire --}}
 
-                
+
             </ul>
         </li>
         {{-- Config. administrativa --}}
 
         <ul class="menu-inner py-1">
-        
 
-        {{-- MENU VERTICAL --}}
 
-        <!-- Gestión de Usuarios -->
-        @canany(['users.view', 'roles.view'])
+            {{-- MENU VERTICAL --}}
+
+            <!-- Gestión de Usuarios -->
+            @canany(['users.view', 'roles.view'])
+                <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text">Admin. del Sistema</span>
+                </li>
+            @endcanany
+
+            <!-- Módulos del ERP -->
             <li class="menu-header small text-uppercase">
-                <span class="menu-header-text">Admin. del Sistema</span>
+                <span class="menu-header-text">Módulos ERP</span>
             </li>
-        @endcanany
 
-        <!-- Módulos del ERP -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Módulos ERP</span>
-        </li>
+            <!-- Inventario -->
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-package"></i>
+                    <div data-i18n="Layouts">Inventario</div>
+                </a>
 
-        <!-- Inventario -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-package"></i>
-                <div data-i18n="Layouts">Inventario</div>
-            </a>
+                <ul class="menu-sub">
 
-            <ul class="menu-sub">
-                
-                @can('articulos.view')
-                    <li class="menu-item {{ request()->routeIs('articulos.*') ? 'active' : '' }}">
-                        <a href="{{ route('articulos.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-package"></i>
-                            <div data-i18n="Basic">Artículos</div>
-                            @if (App\Models\Erp\Articulo::count() > 0)
-                                <div class="badge text-bg-primary rounded-pill ms-auto">
-                                    {{ App\Models\Erp\Articulo::count() }}
-                                </div>
-                            @endif
+                    @can('articulos.view')
+                        <li class="menu-item {{ request()->routeIs('articulos.*') ? 'active' : '' }}">
+                            <a href="{{ route('articulos.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons ti ti-package"></i>
+                                <div data-i18n="Basic">Artículos</div>
+                                @if (App\Models\Erp\Articulo::count() > 0)
+                                    <div class="badge text-bg-primary rounded-pill ms-auto">
+                                        {{ App\Models\Erp\Articulo::count() }}
+                                    </div>
+                                @endif
+                            </a>
+                        </li>
+                    @endcan
+
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Without menu">Productos</div>
                         </a>
                     </li>
-                @endcan
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Without navbar">Categorías</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Container">Stock</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Container">Kardex</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Without menu">Productos</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Without navbar">Categorías</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Container">Stock</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Container">Kardex</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <!-- Ventas -->
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                    <div data-i18n="Account Settings">Ventas</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Account">Clientes</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Notifications">Facturas</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Connections">Reportes</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-        <!-- Ventas -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
-                <div data-i18n="Account Settings">Ventas</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Account">Clientes</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Notifications">Facturas</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Connections">Reportes</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <!-- Compras -->
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-shopping-bag"></i>
+                    <div data-i18n="Authentications">Compras</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Basic">Proveedores</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Basic">Órdenes</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Basic">Recepciones</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-        <!-- Compras -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-shopping-bag"></i>
-                <div data-i18n="Authentications">Compras</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Basic">Proveedores</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Basic">Órdenes</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Basic">Recepciones</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <!-- Finanzas -->
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-coins"></i>
+                    <div data-i18n="Misc">Finanzas</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Error">Cuentas por Cobrar</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Under Maintenance">Cuentas por Pagar</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <div data-i18n="Under Maintenance">Estados Financieros</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-        <!-- Finanzas -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-coins"></i>
-                <div data-i18n="Misc">Finanzas</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Error">Cuentas por Cobrar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Under Maintenance">Cuentas por Pagar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Under Maintenance">Estados Financieros</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <!-- Módulos del CRM -->
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">Módulos CRM</span>
+            </li>
 
-        <!-- Módulos del CRM -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Módulos CRM</span>
-        </li>
-
-        <!-- Recursos Humanos -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Módulo RR.HH.</span>
-        </li>
-    </ul>
+            <!-- Recursos Humanos -->
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">Módulo RR.HH.</span>
+            </li>
+        </ul>
 
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Reporte y Análisis</span>
@@ -309,6 +310,8 @@
                 <div data-i18n="Support">Métricas y Reportes</div>
             </a>
         </li>
+        
+        @include('components.contexto-navbar')
 
     </ul>
 </aside>

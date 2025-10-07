@@ -39,28 +39,28 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
+    /**
+     * The user has been authenticated.
+     * 
+     * Establece el contexto inicial del usuario después del login:
+     * - Superusuario: Sin contexto (puede ver todo)
+     * - Admin/Propietario: Sin contexto específico (ve todo su grupo)
+     * - Usuario operativo: Establece contexto de su empresa principal
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
     protected function authenticated($request, $user)
     {
-
-        Log::info('ARRAY : Usuario autenticado: ' . $user->toJson());
-
-        if($user->esSuperusuario()){
-            $this->redirectTo = '/admin';
-        } elseif($user->esAdministradorGeneral() || $user->esPropietario()){
-            $this->redirectTo = '/'.$user->grupoEmpresa->slug;
+        // Simple: solo redirigir según tiene grupo o no
+        if ($user->grupo_empresa_id && $user->grupoEmpresa) {
+            $this->redirectTo = '/' . $user->grupoEmpresa->slug;
         } else {
-            $empresa = $user->getEmpresaPrincipal();
-            if ($empresa) {
-                $this->redirectTo = '/'.$user->grupoEmpresa->slug.'/erp/'.$empresa->slug;
-            } else {
-                // Si no tiene empresa asignada, redirigir al dashboard del grupo
-                $this->redirectTo = '/'.$user->grupoEmpresa->slug;
-            }
+            $this->redirectTo = '/home';
         }
 
-        // enviar a controlador de dashboardController
         return redirect($this->redirectTo);
     }
-
 
 }

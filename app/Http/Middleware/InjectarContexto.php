@@ -29,11 +29,36 @@ class InjectarContexto
             View::share('grupoActual', $user->grupoEmpresa);
          }
 
-         // Compartir contexto de empresa
+         // Compartir contexto de empresa (desde sesión si existe)
+         $contextoEmpresa = $request->get('contexto_empresa');
+         if (!$contextoEmpresa) {
+            $contexto = $user->getContextoActual();
+            if ($contexto['empresa_id']) {
+               $contextoEmpresa = $user->getEmpresaContexto();
+            }
+         }
+         
          if ($empresa = $request->get('empresa')) {
             View::share('empresaActual', $empresa);
+         } elseif ($contextoEmpresa) {
+            View::share('empresaActual', $contextoEmpresa);
          } elseif ($user->empresa) {
             View::share('empresaActual', $user->empresa);
+         }
+
+         // Compartir contexto de local (desde sesión si existe)
+         $contextoLocal = $request->get('contexto_local');
+         if (!$contextoLocal) {
+            $contexto = $user->getContextoActual();
+            if ($contexto['local_id']) {
+               $contextoLocal = $user->getLocalContexto();
+            }
+         }
+         
+         if ($contextoLocal) {
+            View::share('localActual', $contextoLocal);
+         } elseif ($user->local) {
+            View::share('localActual', $user->local);
          }
 
          // Compartir empresas con acceso

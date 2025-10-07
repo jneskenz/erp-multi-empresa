@@ -136,13 +136,13 @@
         <div class="layout-container">
 
             <!-- Menu principal -->
-            @include('layouts.vuexy.sidebar')
+            @include('layouts.partials.vuexy.sidebar')
             <!-- / Menu principal -->
 
             <div class="layout-page">
 
                 <!-- Navbar -->
-                @include('layouts.vuexy.navbar')
+                @include('layouts.partials.vuexy.navbar')
                 <!-- / Navbar -->
 
                 <!-- Content wrapper -->
@@ -153,7 +153,7 @@
                     <!-- / Content -->
 
                     <!-- Footer -->
-                    @include('layouts.vuexy.footer')
+                    @include('layouts.partials.vuexy.footer')
                     <!-- / Footer -->
 
                     <div class="content-backdrop fade"></div>
