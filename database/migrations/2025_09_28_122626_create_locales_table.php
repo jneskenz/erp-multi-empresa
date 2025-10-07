@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('locales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('grupo_empresa_id')->constrained('grupo_empresas')->cascadeOnDelete();
-            $table->foreignId('empresa_id')->nullable()->constrained('empresas')->cascadeOnDelete();
+            // $table->foreignId('empresa_id')->nullable()->constrained('empresas')->cascadeOnDelete();
             $table->foreignId('sede_id')->constrained('sedes')->cascadeOnDelete();
 
             $table->string('nombre', 100);

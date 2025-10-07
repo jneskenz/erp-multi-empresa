@@ -53,8 +53,10 @@ class LoginController extends Controller
      */
     protected function authenticated($request, $user)
     {
-        // Simple: solo redirigir según tiene grupo o no
+        Log::alert('INgreso : ' . $user->grupEmpresa);
+        
         if ($user->grupo_empresa_id && $user->grupoEmpresa) {
+            Log::alert('INgreso : ' . $user->grupEmpresa->slug);
             $this->redirectTo = '/' . $user->grupoEmpresa->slug;
         } else {
             $this->redirectTo = '/home';
