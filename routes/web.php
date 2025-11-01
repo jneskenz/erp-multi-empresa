@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\GrupoEmpresaController as AdminGrupoController;
+use App\Http\Controllers\Admin\LeadClienteController;
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Workspace\GrupoDashboardController;
 use App\Http\Controllers\Workspace\EmpresaController;
 use App\Http\Controllers\Workspace\SedeController;
@@ -103,32 +105,57 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'superusuario'])
+    ->middleware(['auth', 'superadmin'])
     ->group(function () {
         
         // Dashboard del superusuario
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        // require __DIR__.'/admin.php';
         
-        // Gestión de grupos empresariales
+        // // Gestión de grupos empresariales
         Route::resource('grupos', AdminGrupoController::class);
-        Route::post('grupos/{grupo}/activar', [AdminGrupoController::class, 'activar'])->name('grupos.activar');
-        Route::post('grupos/{grupo}/suspender', [AdminGrupoController::class, 'suspender'])->name('grupos.suspender');
-        Route::post('grupos/{grupo}/cambiar-plan', [AdminGrupoController::class, 'cambiarPlan'])->name('grupos.cambiar-plan');
+        // Route::post('grupos/{grupo}/activar', [AdminGrupoController::class, 'activar'])->name('grupos.activar');
+        // Route::post('grupos/{grupo}/suspender', [AdminGrupoController::class, 'suspender'])->name('grupos.suspender');
+        // Route::post('grupos/{grupo}/cambiar-plan', [AdminGrupoController::class, 'cambiarPlan'])->name('grupos.cambiar-plan');
+
+        // Gestión de logs
+        Route::get('logs', [LogController::class, 'index'])->name('logs.index');
+        Route::get('logs/dashboard', function () {return view('admin.logs.dashboard'); })->name('logs.dashboard');
+        Route::get('logs/stats', [LogController::class, 'stats'])->name('logs.stats');
+        Route::get('logs/{filename}', [LogController::class, 'show'])->name('logs.show');
+        Route::get('logs/{filename}/download', [LogController::class, 'download'])->name('logs.download');
+        Route::post('logs/clean', [LogController::class, 'clean'])->name('logs.clean');
+        Route::delete('logs/{filename}', [LogController::class, 'delete'])->name('logs.delete');
+
+        // Gestión de leads
+        Route::resource('lead-cliente', LeadClienteController::class)->names([
+            'index' => 'lead-cliente.index',
+            'create' => 'lead-cliente.create',
+            'store' => 'lead-cliente.store',
+            'show' => 'lead-cliente.show',
+            'edit' => 'lead-cliente.edit',
+            'update' => 'lead-cliente.update',
+            'destroy' => 'lead-cliente.destroy',
+        ]);
+        Route::post('lead-cliente/{leadCliente}/dar-de-alta', [LeadClienteController::class, 'darDeAlta'])->name('lead-cliente.dar-de-alta');
+
+
         
-        // Gestión global de usuarios
-        Route::get('usuarios', [AdminDashboardController::class, 'usuarios'])->name('usuarios.index');
-        Route::get('usuarios/{user}', [AdminDashboardController::class, 'usuarioDetalle'])->name('usuarios.show');
+        // // Gestión global de usuarios
+        // Route::get('usuarios', [AdminDashboardController::class, 'usuarios'])->name('usuarios.index');
+        // Route::get('usuarios/{user}', [AdminDashboardController::class, 'usuarioDetalle'])->name('usuarios.show');
         
-        // Reportes y estadísticas globales
-        Route::get('reportes', [AdminDashboardController::class, 'reportes'])->name('reportes');
-        Route::get('actividad', [AdminDashboardController::class, 'actividad'])->name('actividad');
+        // // Reportes y estadísticas globales
+        // Route::get('reportes', [AdminDashboardController::class, 'reportes'])->name('reportes');
+        // Route::get('actividad', [AdminDashboardController::class, 'actividad'])->name('actividad');
         
-        // Configuración del sistema
-        Route::get('configuracion', [AdminDashboardController::class, 'configuracion'])->name('configuracion');
-        Route::post('configuracion', [AdminDashboardController::class, 'guardarConfiguracion'])->name('configuracion.store');
+        // // Configuración del sistema
+        // Route::get('configuracion', [AdminDashboardController::class, 'configuracion'])->name('configuracion');
+        // Route::post('configuracion', [AdminDashboardController::class, 'guardarConfiguracion'])->name('configuracion.store');
         
-        // Logs del sistema
-        Route::get('logs', [AdminDashboardController::class, 'logs'])->name('logs');
+        // // Logs del sistema
+        // Route::get('logs', [AdminDashboardController::class, 'logs'])->name('logs');
         
     });
 
@@ -187,7 +214,7 @@ Route::prefix('{grupo}')
         // Reportes del grupo
         Route::get('reportes', [GrupoDashboardController::class, 'reportes'])->name('reportes');
         
-    });
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -197,99 +224,100 @@ Route::prefix('{grupo}')
 | Middleware: auth, grupo.access, empresa.access
 */
 
-Route::prefix('{grupo}/erp/{empresa}')
-    ->name('empresa.')
-    ->middleware(['auth', 'grupo.access', 'empresa.access'])
-    ->group(function () {
+// Route::prefix('{grupo}/erp/{empresa}')
+//     ->name('empresa.')
+//     ->middleware(['auth', 'grupo.access', 'empresa.access'])
+//     ->group(function () {
         
-        // Dashboard de la empresa
-        Route::get('/', [EmpresaDashboardController::class, 'index'])->name('dashboard');
+//         // Dashboard de la empresa
+//         Route::get('/', [EmpresaDashboardController::class, 'index'])->name('dashboard');
         
-        // Módulos de la empresa (ERP, CRM, RRHH, etc.)
-        // Estos se cargarán dinámicamente según los módulos activos
+//         // Módulos de la empresa (ERP, CRM, RRHH, etc.)
+//         // Estos se cargarán dinámicamente según los módulos activos
         
-        // Módulo: Ventas
-        Route::prefix('ventas')->name('ventas.')->group(function () {
-            Route::get('/', function () {
-                return view('empresa.ventas.index');
-            })->name('index');
-            Route::get('cotizaciones', function () {
-                return view('empresa.ventas.cotizaciones');
-            })->name('cotizaciones');
-            Route::get('facturas', function () {
-                return view('empresa.ventas.facturas');
-            })->name('facturas');
-        });
+//         // Módulo: Ventas
+//         Route::prefix('ventas')->name('ventas.')->group(function () {
+//             Route::get('/', function () {
+//                 return view('empresa.ventas.index');
+//             })->name('index');
+//             Route::get('cotizaciones', function () {
+//                 return view('empresa.ventas.cotizaciones');
+//             })->name('cotizaciones');
+//             Route::get('facturas', function () {
+//                 return view('empresa.ventas.facturas');
+//             })->name('facturas');
+//         });
         
-        // Módulo: Inventario
-        Route::prefix('inventario')->name('inventario.')->group(function () {
-            Route::get('/', function () {
-                return view('empresa.inventario.index');
-            })->name('index');
-            Route::get('productos', function () {
-                return view('empresa.inventario.productos');
-            })->name('productos');
-            Route::get('stock', function () {
-                return view('empresa.inventario.stock');
-            })->name('stock');
-        });
+//         // Módulo: Inventario
+//         Route::prefix('inventario')->name('inventario.')->group(function () {
+//             Route::get('/', function () {
+//                 return view('empresa.inventario.index');
+//             })->name('index');
+//             Route::get('productos', function () {
+//                 return view('empresa.inventario.productos');
+//             })->name('productos');
+//             Route::get('stock', function () {
+//                 return view('empresa.inventario.stock');
+//             })->name('stock');
+//         });
         
-        // Módulo: Compras
-        Route::prefix('compras')->name('compras.')->group(function () {
-            Route::get('/', function () {
-                return view('empresa.compras.index');
-            })->name('index');
-            Route::get('ordenes', function () {
-                return view('empresa.compras.ordenes');
-            })->name('ordenes');
-            Route::get('proveedores', function () {
-                return view('empresa.compras.proveedores');
-            })->name('proveedores');
-        });
+//         // Módulo: Compras
+//         Route::prefix('compras')->name('compras.')->group(function () {
+//             Route::get('/', function () {
+//                 return view('empresa.compras.index');
+//             })->name('index');
+//             Route::get('ordenes', function () {
+//                 return view('empresa.compras.ordenes');
+//             })->name('ordenes');
+//             Route::get('proveedores', function () {
+//                 return view('empresa.compras.proveedores');
+//             })->name('proveedores');
+//         });
         
-        // Módulo: Clientes (CRM)
-        Route::prefix('clientes')->name('clientes.')->group(function () {
-            Route::get('/', function () {
-                return view('empresa.clientes.index');
-            })->name('index');
-            Route::get('oportunidades', function () {
-                return view('empresa.clientes.oportunidades');
-            })->name('oportunidades');
-        });
+//         // Módulo: Clientes (CRM)
+//         Route::prefix('clientes')->name('clientes.')->group(function () {
+//             Route::get('/', function () {
+//                 return view('empresa.clientes.index');
+//             })->name('index');
+//             Route::get('oportunidades', function () {
+//                 return view('empresa.clientes.oportunidades');
+//             })->name('oportunidades');
+//         });
         
-        // Módulo: Contabilidad
-        Route::prefix('contabilidad')->name('contabilidad.')->group(function () {
-            Route::get('/', function () {
-                return view('empresa.contabilidad.index');
-            })->name('index');
-            Route::get('plan-cuentas', function () {
-                return view('empresa.contabilidad.plan-cuentas');
-            })->name('plan-cuentas');
-            Route::get('flujo-caja', function () {
-                return view('empresa.contabilidad.flujo-caja');
-            })->name('flujo-caja');
-        });
+//         // Módulo: Contabilidad
+//         Route::prefix('contabilidad')->name('contabilidad.')->group(function () {
+//             Route::get('/', function () {
+//                 return view('empresa.contabilidad.index');
+//             })->name('index');
+//             Route::get('plan-cuentas', function () {
+//                 return view('empresa.contabilidad.plan-cuentas');
+//             })->name('plan-cuentas');
+//             Route::get('flujo-caja', function () {
+//                 return view('empresa.contabilidad.flujo-caja');
+//             })->name('flujo-caja');
+//         });
         
-        // Módulo: Reportes de empresa
-        Route::prefix('reportes')->name('reportes.')->group(function () {
-            Route::get('/', function () {
-                return view('empresa.reportes.index');
-            })->name('index');
-            Route::get('financieros', function () {
-                return view('empresa.reportes.financieros');
-            })->name('financieros');
-            Route::get('ventas', function () {
-                return view('empresa.reportes.ventas');
-            })->name('ventas');
-        });
+//         // Módulo: Reportes de empresa
+//         Route::prefix('reportes')->name('reportes.')->group(function () {
+//             Route::get('/', function () {
+//                 return view('empresa.reportes.index');
+//             })->name('index');
+//             Route::get('financieros', function () {
+//                 return view('empresa.reportes.financieros');
+//             })->name('financieros');
+//             Route::get('ventas', function () {
+//                 return view('empresa.reportes.ventas');
+//             })->name('ventas');
+//         });
         
-        // Configuración de la empresa (solo para administradores)
-        Route::middleware(['permission:configurar_empresa'])->group(function () {
-            Route::get('configuracion', [EmpresaDashboardController::class, 'configuracion'])->name('configuracion');
-            Route::post('configuracion', [EmpresaDashboardController::class, 'guardarConfiguracion'])->name('configuracion.store');
-        });
+//         // Configuración de la empresa (solo para administradores)
+//         Route::middleware(['permission:configurar_empresa'])->group(function () {
+//             Route::get('configuracion', [EmpresaDashboardController::class, 'configuracion'])->name('configuracion');
+//             Route::post('configuracion', [EmpresaDashboardController::class, 'guardarConfiguracion'])->name('configuracion.store');
+//         });
         
-    });
+// });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -297,21 +325,21 @@ Route::prefix('{grupo}/erp/{empresa}')
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->group(function () {
+// Route::middleware(['auth'])->group(function () {
     
-    // Cambiar contexto de empresa
-    Route::post('/cambiar-empresa/{empresa}', [DashboardController::class, 'cambiarEmpresa'])->name('cambiar-empresa');
+//     // Cambiar contexto de empresa
+//     Route::post('/cambiar-empresa/{empresa}', [DashboardController::class, 'cambiarEmpresa'])->name('cambiar-empresa');
     
-    // Perfil de usuario
-    Route::get('/perfil', [DashboardController::class, 'perfil'])->name('perfil');
-    Route::post('/perfil', [DashboardController::class, 'actualizarPerfil'])->name('perfil.update');
-    Route::post('/perfil/avatar', [DashboardController::class, 'actualizarAvatar'])->name('perfil.avatar');
+//     // Perfil de usuario
+//     Route::get('/perfil', [DashboardController::class, 'perfil'])->name('perfil');
+//     Route::post('/perfil', [DashboardController::class, 'actualizarPerfil'])->name('perfil.update');
+//     Route::post('/perfil/avatar', [DashboardController::class, 'actualizarAvatar'])->name('perfil.avatar');
     
-    // Notificaciones
-    Route::get('/notificaciones', [DashboardController::class, 'notificaciones'])->name('notificaciones');
-    Route::post('/notificaciones/{id}/leer', [DashboardController::class, 'marcarLeida'])->name('notificaciones.leer');
+//     // Notificaciones
+//     Route::get('/notificaciones', [DashboardController::class, 'notificaciones'])->name('notificaciones');
+//     Route::post('/notificaciones/{id}/leer', [DashboardController::class, 'marcarLeida'])->name('notificaciones.leer');
     
-});
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -319,8 +347,8 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'grupo.access'])->group(function () {
-    Route::get('/{grupo}/plan-expirado', function ($grupo) {
-        return view('errors.plan-expirado', compact('grupo'));
-    })->name('grupo.plan-expirado');
-});
+// Route::middleware(['auth', 'grupo.access'])->group(function () {
+//     Route::get('/{grupo}/plan-expirado', function ($grupo) {
+//         return view('errors.plan-expirado', compact('grupo'));
+//     })->name('grupo.plan-expirado');
+// });

@@ -22,8 +22,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Blade directive para verificar si el usuario es superadmin
-        // Blade::if('superadmin', function () {
-        //     return Auth::check() && Auth::user()->isSuperAdmin();
-        // });
+        Blade::if('superadmin', function () {
+            return Auth::check() && Auth::user()->isSuperAdmin();
+        });
     }
 }

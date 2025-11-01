@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -371,13 +372,13 @@ class User extends Authenticatable
         }
         
         // Usuario operativo
-        $empresa = $this->getEmpresaPrincipal();
-        if ($empresa) {
-            return route('empresa.dashboard', [
-                'grupo' => $empresa->grupoEmpresa->slug,
-                'empresa' => $empresa->slug
-            ]);
-        }
+        // $empresa = $this->getEmpresaPrincipal();
+        // if ($empresa) {
+        //     return route('empresa.dashboard', [
+        //         'grupo' => $empresa->grupoEmpresa->slug,
+        //         'empresa' => $empresa->slug
+        //     ]);
+        // }
         
         // Fallback
         return route('dashboard');
@@ -491,12 +492,12 @@ class User extends Authenticatable
     /**
      * Registrar último acceso
      */
-    public function registrarAcceso(string $ip = null): void
-    {
-        $this->ultimo_acceso = now();
-        $this->ultimo_ip = $ip ?? request()->ip();
-        $this->save();
-    }
+    // public function registrarAcceso(string $ip = null): void
+    // {
+    //     $this->ultimo_acceso = now();
+    //     $this->ultimo_ip = $ip ?? request()->ip();
+    //     $this->save();
+    // }
 
     /**
      * Obtener configuración visual del usuario
@@ -551,4 +552,96 @@ class User extends Authenticatable
             'local' => $this->local,
         ];
     }
+
+    /**
+     * Verificar si el usuario es superadministrador
+     * Validación segura: debe estar en la lista hardcodeada Y tener el campo en true
+     */
+    public function isSuperAdmin(): bool
+    {
+        // 1. Verificar que el email esté en la lista de configuración
+        $allowedEmails = config('superadmin.allowed_emails', []);
+
+        Log::info('Verificando superadmin para email: ' . $this->email);
+        Log::info('Verificando superadmin para allowedEmails: ' . implode(', ', $allowedEmails));
+        Log::info('Verificando superadmin para is_super_admin: ' . $this->is_super_admin);
+        
+        if (!in_array($this->email, $allowedEmails)) {
+            Log::info('Verificando que no ingreso: ' . $this->email);
+            // Log de intento de acceso no autorizado
+            if ($this->is_super_admin === true) {
+                Log::warning('Intento de acceso superadmin no autorizado', [
+                    'user_id' => $this->id,
+                    'email' => $this->email,
+                    'ip' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            }
+            return false;
+        }
+
+        // 2. Verificar que tenga el campo is_super_admin en true
+        if ($this->is_super_admin != true) {
+            Log::info('Verificando que no is_super_admin: ');
+
+            return false;
+        }
+
+        // 3. Verificación adicional: email verificado (si está habilitado)
+        if (config('superadmin.require_email_verification', true) && !$this->hasVerifiedEmail()) {
+            Log::info('Verificando que no require_email_verification: ');
+
+            return false;
+        }
+
+        // 4. Log de acceso exitoso de superadmin
+        if (config('superadmin.log_superadmin_access', true)) {
+            Log::info('Acceso de superadministrador', [
+                'user_id' => $this->id,
+                'email' => $this->email,
+                'ip' => request()->ip(),
+            ]);
+        }
+
+        return true;
+    }
+
+    /**
+     * Override del método can para superadministradores
+     */
+    public function can($abilities, $arguments = [])
+    {
+        // Si es superadministrador, puede hacer todo
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        // Si no es superadministrador, usar la lógica normal de Spatie
+        return parent::can($abilities, $arguments);
+    }
+
+    /**
+     * Relación con las personalizaciones del usuario
+     */
+    public function customization()
+    {
+        return $this->hasOne(UserCustomization::class);
+    }
+
+    /**
+     * Obtener o crear las personalizaciones del usuario
+     */
+    public function getCustomization()
+    {
+
+        if (!$this->customization) {
+            $this->customization()->create(UserCustomization::getDefaults());
+            $this->load('customization');
+        }
+        
+        return $this->customization;
+    }
+
+    
+
 }

@@ -1,11 +1,14 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-adm')
 
 @section('title', 'Gestión de Logs del Sistema')
 
 @section('page-style')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@2.3.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('vuexy/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vuexy/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .log-level-badge {
@@ -54,9 +57,14 @@
         }
     </style>
 
-{{-- @endsection
+@endsection
 
-@section('page-script') --}}
+@section('page-script')
+
+    <!-- DataTables JS -->
+
+    <script src="{{ asset('vuexy/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    {{-- <script src="{{ asset('vuexy/js/tables-datatables-advanced.js') }}"></script> --}}
 
     <script>        
 
@@ -78,8 +86,56 @@
             }
 
             // Auto-refresh cada 30 segundos
-            setInterval(refreshStats, 30000);
+            setInterval(refreshStats, 300000);
         });
+
+        // Función para confirmar eliminación de archivo
+        function confirmDelete(filename) {
+            Swal.fire({
+                title: '¿Eliminar archivo de log?',
+                text: `Se eliminará permanentemente el archivo: ${filename}`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Configurar el formulario oculto
+                    const form = document.getElementById('deleteForm');
+                    form.action = `/admin/logs/${filename}`;
+                    form.submit();
+                }
+            });
+        }
+
+        // Función para refrescar estadísticas
+        function refreshStats() {
+            location.reload();
+        }
+
+        // Función de prueba
+        function testButton() {
+            fetch('{{ route("admin.logs.stats") }}')
+                .then(response => response.json())
+                .then(data => {
+                    Swal.fire({
+                        title: 'Test de Conexión',
+                        text: 'Conexión exitosa con el servidor',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error de Conexión',
+                        text: 'No se pudo conectar con el servidor',
+                        icon: 'error'
+                    });
+                });
+        }
 
     </script>
 
@@ -88,14 +144,31 @@
 @section('content')
 
     <div class="container-xxl flex-grow-1 container-p-y">
+        
         @if (session('success'))
             <script>
-                alert('✓ {{ session('success') }}');
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: '{{ session('success') }}',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                });
             </script>
         @endif
+        
         @if (session('error'))
             <script>
-                alert('✗ {{ session('error') }}');
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        title: 'Error',
+                        text: '{{ session('error') }}',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido'
+                    });
+                });
             </script>
         @endif
 
@@ -241,90 +314,91 @@
                 </h5>
                 <span class="badge bg-primary">{{ count($logFiles) }} archivos</span>
             </div>
-
-            @if(count($logFiles) > 0)
-                <div class="table-responsive">
-                    <table class="table table-hover" id="logsTable">
-                        <thead class="table-light">
-                            <tr>
-                                <th><i class="ti ti-file me-1"></i>Archivo</th>
-                                <th><i class="ti ti-database me-1"></i>Tamaño</th>
-                                <th><i class="ti ti-calendar me-1"></i>Última Modificación</th>
-                                <th><i class="ti ti-shield-check me-1"></i>Estado</th>
-                                <th class="text-center"><i class="ti ti-settings me-1"></i>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($logFiles as $logFile)
+            <div class="card-body py-5">
+                @if(count($logFiles) > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm table-small" id="logsTable">
+                            <thead class="table-light">
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="ti ti-file-text me-2 text-primary"></i>
-                                            <div>
-                                                <span class="fw-medium">{{ $logFile['name'] }}</span>
-                                                @if(str_contains($logFile['name'], 'laravel'))
-                                                    <span class="badge bg-label-primary ms-2 file-size-badge">Principal</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-label-info file-size-badge">{{ $logFile['size'] }}</span>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span class="fw-medium">{{ $logFile['modified']->format('d/m/Y H:i:s') }}</span>
-                                            <br>
-                                            <small class="text-muted">{{ $logFile['modified']->diffForHumans() }}</small>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        @if($logFile['is_readable'])
-                                            <span class="badge bg-success">
-                                                <i class="ti ti-check me-1"></i>Legible
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger">
-                                                <i class="ti ti-x me-1"></i>No Legible
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            @if($logFile['is_readable'])
-                                                <a href="{{ route('admin.logs.show', $logFile['name']) }}" 
-                                                class="btn btn-sm btn-outline-primary" 
-                                                title="Ver contenido">
-                                                    <i class="ti ti-eye"></i>
-                                                </a>
-                                                <a href="{{ route('admin.logs.download', $logFile['name']) }}" 
-                                                class="btn btn-sm btn-outline-info" 
-                                                title="Descargar">
-                                                    <i class="ti ti-download"></i>
-                                                </a>
-                                            @endif
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-outline-danger" 
-                                                    onclick="confirmDelete('{{ $logFile['name'] }}')"
-                                                    title="Eliminar">
-                                                <i class="ti ti-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+                                    <th><i class="ti ti-file me-1"></i>Archivo</th>
+                                    <th><i class="ti ti-database me-1"></i>Tamaño</th>
+                                    <th><i class="ti ti-calendar me-1"></i>Última Modificación</th>
+                                    <th><i class="ti ti-shield-check me-1"></i>Estado</th>
+                                    <th class="text-center"><i class="ti ti-settings me-1"></i>Acciones</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <div class="card-body text-center py-5">
-                    <div class="mb-3">
-                        <i class="ti ti-file-x display-4 text-muted"></i>
+                            </thead>
+                            <tbody>
+                                @foreach($logFiles as $logFile)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="ti ti-file-text me-2 text-primary"></i>
+                                                <div>
+                                                    <span class="fw-medium">{{ $logFile['name'] }}</span>
+                                                    @if(str_contains($logFile['name'], 'laravel'))
+                                                        <span class="badge bg-label-primary ms-2 file-size-badge">Principal</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-label-info file-size-badge">{{ $logFile['size'] }}</span>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <span class="fw-medium">{{ $logFile['modified']->format('d/m/Y H:i:s') }}</span>
+                                                <br>
+                                                <small class="text-muted">{{ $logFile['modified']->diffForHumans() }}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if($logFile['is_readable'])
+                                                <span class="badge bg-success">
+                                                    <i class="ti ti-check me-1"></i>Legible
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger">
+                                                    <i class="ti ti-x me-1"></i>No Legible
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                @if($logFile['is_readable'])
+                                                    <a href="{{ route('admin.logs.show', $logFile['name']) }}" 
+                                                    class="btn btn-sm btn-outline-primary" 
+                                                    title="Ver contenido">
+                                                        <i class="ti ti-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.logs.download', $logFile['name']) }}" 
+                                                    class="btn btn-sm btn-outline-info" 
+                                                    title="Descargar">
+                                                        <i class="ti ti-download"></i>
+                                                    </a>
+                                                @endif
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-danger" 
+                                                        onclick="confirmDelete('{{ $logFile['name'] }}')"
+                                                        title="Eliminar">
+                                                    <i class="ti ti-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                    <h5 class="mb-2">No se encontraron archivos de log</h5>
-                    <p class="text-muted">No hay archivos de log disponibles en el directorio storage/logs</p>
-                </div>
-            @endif
+                @else
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="ti ti-file-x display-4 text-muted"></i>
+                        </div>
+                        <h5 class="mb-2">No se encontraron archivos de log</h5>
+                        <p class="text-muted">No hay archivos de log disponibles en el directorio storage/logs</p>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 

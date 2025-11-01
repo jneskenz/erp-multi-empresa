@@ -1,4 +1,4 @@
-@extends('layouts.adm-app')
+@extends('layouts.vuexy')
 
 @section('title', 'Panel de Administración')
 

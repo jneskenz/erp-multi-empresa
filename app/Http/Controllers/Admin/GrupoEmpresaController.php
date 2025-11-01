@@ -16,29 +16,29 @@ class GrupoEmpresaController extends Controller
     */
    public function index(Request $request)
    {
-      $query = GrupoEmpresa::with('propietarios');
+      // $query = GrupoEmpresa::with('propietarios');
 
-      // Filtros
-      if ($request->filled('search')) {
-         $search = $request->search;
-         $query->where(function ($q) use ($search) {
-            $q->where('nombre', 'like', "%{$search}%")
-               ->orWhere('slug', 'like', "%{$search}%")
-               ->orWhere('ruc', 'like', "%{$search}%");
-         });
-      }
+      // // Filtros
+      // if ($request->filled('search')) {
+      //    $search = $request->search;
+      //    $query->where(function ($q) use ($search) {
+      //       $q->where('nombre', 'like', "%{$search}%")
+      //          ->orWhere('slug', 'like', "%{$search}%")
+      //          ->orWhere('ruc', 'like', "%{$search}%");
+      //    });
+      // }
 
-      if ($request->filled('plan')) {
-         $query->where('plan_actual', $request->plan);
-      }
+      // if ($request->filled('plan')) {
+      //    $query->where('plan_actual', $request->plan);
+      // }
 
-      if ($request->filled('activo')) {
-         $query->where('activo', $request->activo);
-      }
+      // if ($request->filled('activo')) {
+      //    $query->where('activo', $request->activo);
+      // }
 
-      $grupos = $query->latest()->paginate(20);
+      // $grupos = $query->latest()->paginate(20);
 
-      return view('apps.admin.grupos.index', compact('grupos'));
+      return view('admin.grupo-empresas.index');
    }
 
    /**

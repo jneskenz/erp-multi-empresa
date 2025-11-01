@@ -53,8 +53,16 @@ return new class extends Migration
             $table->timestamp('fecha_revocacion')->nullable();
             
             $table->timestamps();
-            
+
+            // Campo para auditoría: quién asignó esta empresa al usuario
+            $table->foreignId('created_by')
+                ->nullable()
+                ->after('fecha_revocacion')
+                ->constrained('users')
+                ->nullOnDelete();
+                
             // Índices
+            $table->index('created_by');
             $table->unique(['empresa_id', 'user_id']);
             $table->index(['user_id', 'es_principal']);
         });

@@ -53,11 +53,10 @@ class LoginController extends Controller
      */
     protected function authenticated($request, $user)
     {
-        Log::alert('INgreso : ' . $user->grupEmpresa);
-        
-        if ($user->grupo_empresa_id && $user->grupoEmpresa) {
-            Log::alert('INgreso : ' . $user->grupEmpresa->slug);
-            $this->redirectTo = '/' . $user->grupoEmpresa->slug;
+        Log::alert('INgreso : ' . $user->grupoEmpresa);
+        if ($user->isSuperAdmin()) {
+            Log::alert('INgreso : admin');
+            $this->redirectTo = '/admin';
         } else {
             $this->redirectTo = '/home';
         }

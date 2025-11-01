@@ -94,8 +94,11 @@
     @endif
 
     <!-- Icons -->
-    <link rel="stylesheet" href="{{ asset('vuexy/vendor/fonts/tabler-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/fonts/icon/tabler-icons.min.css') }}" />
 
+    {{-- Alert  --}}
+    <link rel="stylesheet" href="{{ asset('vuexy/vendor/libs/toastr/toastr.css') }}" />
+    
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('vuexy/vendor/css/core.css') }}" class="template-customizer-core-css" />
     <link rel="stylesheet" href="{{ asset('vuexy/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
@@ -104,7 +107,12 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('vuexy/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 
-    <!-- Page CSS -->
+    @yield('ui-vendor-styles')
+
+    @yield('ui-page-styles')
+
+    @yield('page-style')
+
     @stack('styles')
     
     <!-- Custom User Styles -->
@@ -114,14 +122,19 @@
     <script src="{{ asset('vuexy/vendor/js/helpers.js') }}"></script>
 
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
-    <!-- <script src="{{ asset('vuexy/vendor/js/template-customizer.js') }}"></script>.  -->
+    <script src="{{ asset('vuexy/vendor/js/template-customizer.js') }}"></script>   
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file to customize your theme -->
     <script src="{{ asset('vuexy/js/config.js') }}"></script>
 
+
     @livewireStyles
+
     
+    
+    <!-- Scripts -->
+    <!-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) -->
 
 </head>
 
@@ -136,13 +149,13 @@
         <div class="layout-container">
 
             <!-- Menu principal -->
-            @include('layouts.partials.vuexy.sidebar')
+            @include('layouts.partials.admin.sidebar')
             <!-- / Menu principal -->
 
             <div class="layout-page">
 
                 <!-- Navbar -->
-                @include('layouts.partials.vuexy.navbar')
+                @include('layouts.partials.admin.navbar')
                 <!-- / Navbar -->
 
                 <!-- Content wrapper -->
@@ -153,7 +166,7 @@
                     <!-- / Content -->
 
                     <!-- Footer -->
-                    @include('layouts.partials.vuexy.footer')
+                    @include('layouts.partials.admin.footer')
                     <!-- / Footer -->
 
                     <div class="content-backdrop fade"></div>
@@ -176,7 +189,7 @@
         <div class="layout-container">
 
             <!-- Menu principal -->
-            @include('layouts.partials.vuexy.headerbar')
+            @include('layouts.partials.admin.headerbar')
             <!-- / Menu principal -->
 
             <div class="layout-page">
@@ -185,7 +198,7 @@
                 <div class="content-wrapper">
 
                     <!-- Menu -->
-                    @include('layouts.partials.vuexy.menu')
+                    @include('layouts.partials.admin.menu')
                     <!-- / Menu -->
 
                     <!-- Content -->
@@ -195,7 +208,7 @@
                     <!-- / Content -->
 
                     <!-- Footer -->
-                    @include('layouts.partials.vuexy.footer')
+                    @include('layouts.partials.admin.footer')
                     <!-- / Footer -->
 
                     <div class="content-backdrop fade"></div>
@@ -232,24 +245,34 @@
     <script src="{{ asset('vuexy/vendor/libs/hammer/hammer.js') }}"></script>
     {{-- <script src="{{ asset('vuexy/vendor/libs/i18n/i18n.js') }}"></script> --}}
     <script src="{{ asset('vuexy/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+    <script src="{{ asset('vuexy/vendor/libs/toastr/toastr.js') }}"></script>
 
     <script src="{{ asset('vuexy/vendor/js/menu.js') }}"></script>
     <!-- endbuild -->
 
-    <!-- Vendors JS -->
-    @stack('vendor-scripts')
+    <!-- Vendors JS | UI -->
+    @yield('ui-vendor-scripts')
 
     <!-- Main JS -->
     <script src="{{ asset('vuexy/js/main.js') }}"></script>
 
-    <!-- Page JS -->
-    @stack('scripts')
+    <!-- Vendors JS | UI -->
+    @yield('ui-page-scripts')
+
 
     @livewireScripts
+    
+
+    <!-- All Page JS | CUSTOM -->
+    @stack('scripts')
+
+    <!-- Single Page JS | CUSTOM -->
+    @yield('page-script')
+
 
     <!-- Error Counter for SuperAdmin -->
     @auth
-        {{-- @if(auth()->user()->isSuperAdmin())
+        @if(auth()->user()->isSuperAdmin())
             <script>
                 // Función para actualizar contador de errores en el sidebar
                 function updateErrorCounter() {
@@ -275,8 +298,9 @@
                     setInterval(updateErrorCounter, 30000); // Cada 30 segundos
                 });
             </script>
-        @endif --}}
+        @endif
     @endauth
+
 </body>
 
 </html>

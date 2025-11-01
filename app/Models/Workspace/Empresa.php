@@ -297,38 +297,38 @@ class Empresa extends Model
      * @param User|null $creadoPor Usuario que realiza la asignación (para auditoría)
      * @return bool True si se asignó exitosamente
      */
-    public function asignarUsuario(User $usuario, bool $esPrincipal = false, ?User $creadoPor = null): bool
-    {
-        // Verificar si ya existe la relación
-        if ($this->usuariosMultiples()->where('user_id', $usuario->id)->exists()) {
-            return false;
-        }
+    // public function asignarUsuario(User $usuario, bool $esPrincipal = false, ?User $creadoPor = null): bool
+    // {
+    //     // Verificar si ya existe la relación
+    //     if ($this->usuariosMultiples()->where('user_id', $usuario->id)->exists()) {
+    //         return false;
+    //     }
         
-        $this->usuariosMultiples()->attach($usuario->id, [
-            'es_principal' => $esPrincipal,
-            'activo' => true,
-            'fecha_asignacion' => now(),
-            'created_by' => $creadoPor ? $creadoPor->id : auth()->id(),
-        ]);
+    //     $this->usuariosMultiples()->attach($usuario->id, [
+    //         'es_principal' => $esPrincipal,
+    //         'activo' => true,
+    //         'fecha_asignacion' => now(),
+    //         'created_by' => $creadoPor ? $creadoPor->id : auth()->id(),
+    //     ]);
         
-        // Si es principal, actualizar el usuario
-        if ($esPrincipal) {
-            $usuario->empresa_id = $this->id;
-            $usuario->save();
-        }
+    //     // Si es principal, actualizar el usuario
+    //     if ($esPrincipal) {
+    //         $usuario->empresa_id = $this->id;
+    //         $usuario->save();
+    //     }
         
-        activity()
-            ->performedOn($this)
-            ->causedBy($creadoPor ?? auth()->user())
-            ->withProperties([
-                'empresa' => $this->nombre,
-                'usuario_asignado' => $usuario->name,
-                'es_principal' => $esPrincipal,
-            ])
-            ->log('Usuario asignado a empresa');
+    //     activity()
+    //         ->performedOn($this)
+    //         ->causedBy($creadoPor ?? auth()->user())
+    //         ->withProperties([
+    //             'empresa' => $this->nombre,
+    //             'usuario_asignado' => $usuario->name,
+    //             'es_principal' => $esPrincipal,
+    //         ])
+    //         ->log('Usuario asignado a empresa');
         
-        return true;
-    }
+    //     return true;
+    // }
 
     /**
      * Revocar acceso de usuario
@@ -352,13 +352,13 @@ class Empresa extends Model
     /**
      * Obtener ruta del dashboard de la empresa
      */
-    public function rutaDashboard(): string
-    {
-        return route('empresa.dashboard', [
-            'grupo' => $this->grupoEmpresa->slug,
-            'empresa' => $this->slug
-        ]);
-    }
+    // public function rutaDashboard(): string
+    // {
+    //     return route('empresa.dashboard', [
+    //         'grupo' => $this->grupoEmpresa->slug,
+    //         'empresa' => $this->slug
+    //     ]);
+    // }
 
     // ==================== ACCESSORS ====================
     

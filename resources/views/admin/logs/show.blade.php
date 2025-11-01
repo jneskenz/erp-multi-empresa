@@ -1,10 +1,10 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-adm')
 
 @section('title', 'Visor de Log: ' . $fileInfo['name'])
 
 @section('page-style')
-    {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('vuexy/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vuexy/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
     <style>
         .log-entry {
             margin-bottom: 1rem;
@@ -284,8 +284,7 @@
                             </div>
 
                             <div class="col-md-2 d-flex align-items-end">
-                                <a href="{{ route('admin.logs.show', $fileInfo['name']) }}"
-                                    class="btn btn-outline-secondary w-100">
+                                <a href="{{ route('admin.logs.show', $fileInfo['name']) }}" class="btn btn-outline-secondary w-100">
                                     <i class="ti ti-refresh me-1"></i>Limpiar
                                 </a>
                             </div>
@@ -532,7 +531,8 @@
 
 @section('page-script')
 
-    <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('vuexy/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+
     <script>
         // Función para copiar al portapapeles
         function copyToClipboard(elementId) {

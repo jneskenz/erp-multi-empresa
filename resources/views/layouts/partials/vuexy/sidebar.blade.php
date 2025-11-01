@@ -88,7 +88,7 @@
             <ul class="menu-sub">
                 @can('users.view')
                     <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        <a href="{{ route('users.index') }}" class="menu-link">
+                        <a href="" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-user"></i>
                             <div data-i18n="Basic">Usuarios</div>
                             @if (App\Models\User::count() > 0)
@@ -101,7 +101,7 @@
                 @endcan
                 @can('roles.view')
                     <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
-                        <a href="{{ route('roles.index') }}" class="menu-link">
+                        <a href="" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-shield"></i>
                             <div data-i18n="Basic">Roles y Permisos</div>
                             @if (Spatie\Permission\Models\Role::count() > 0)
@@ -114,39 +114,29 @@
 
                 @can('empresas.view')
                     <li class="menu-item {{ request()->routeIs('empresas.*') ? 'active' : '' }}">
-                        <a href="{{ route('empresas.index') }}" class="menu-link">
+                        <a href="" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-building"></i>
                             <div data-i18n="Basic">Empresas</div>
-                            @if (App\Models\Erp\Empresa::count() > 0)
-                                <div class="badge text-bg-primary rounded-pill ms-auto">
-                                    {{ App\Models\Erp\Empresa::count() }}</div>
-                            @endif
+                            
                         </a>
                     </li>
                 @endcan
 
                 @can('sedes.view')
                     <li class="menu-item {{ request()->routeIs('sedes.*') ? 'active' : '' }}">
-                        <a href="{{ route('sedes.index') }}" class="menu-link">
+                        <a href="" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-building-bank"></i>
                             <div data-i18n="Basic">Sedes</div>
-                            @if (App\Models\Erp\Sede::count() > 0)
-                                <div class="badge text-bg-primary rounded-pill ms-auto">
-                                    {{ App\Models\Erp\Sede::count() }}</div>
-                            @endif
+                            
                         </a>
                     </li>
                 @endcan
                 @can('locales.view')
                     <li class="menu-item {{ request()->routeIs('locales.*') ? 'active' : '' }}">
-                        <a href="{{ route('locales.index') }}" class="menu-link">
+                        <a href="" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-building-store"></i>
                             <div data-i18n="Basic">Locales</div>
-                            @if (App\Models\Erp\Local::count() > 0)
-                                <div class="badge text-bg-primary rounded-pill ms-auto">
-                                    {{ App\Models\Erp\Local::count() }}
-                                </div>
-                            @endif
+                            
                         </a>
                     </li>
                 @endcan

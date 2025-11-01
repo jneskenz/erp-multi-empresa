@@ -1,8 +1,9 @@
-@extends('layouts.vuexy')
+@extends('layouts.app-adm')
 
 @section('title', 'Panel de Monitoreo de Logs')
 
 @section('page-style')
+
 <style>
     .log-alert-card {
         border-left: 4px solid #dc3545;
@@ -104,6 +105,7 @@
             .catch(error => {
                 console.error('Error loading stats:', error);
             });
+            console.log('Response:', response);
     }
 
     // Función para actualizar la visualización de estadísticas
@@ -181,6 +183,9 @@
                 </div>
             </div>
         `;
+
+        console.log('Response 2:', response);
+
     }
 
     // Función para actualizar alerta de errores críticos
@@ -208,6 +213,9 @@
             alertElement.classList.add('d-none');
             recentErrorsCard.style.display = 'none';
         }
+
+        console.log('Response 3:', response);
+
     }
 
     // Cargar estadísticas al cargar la página
@@ -219,6 +227,9 @@
         
         // Mostrar toast de bienvenida
         toastr.success('Panel de monitoreo iniciado', 'Sistema de Logs');
+        
+        console.log('Response 4:', response);
+
     });
 </script>
 @endsection

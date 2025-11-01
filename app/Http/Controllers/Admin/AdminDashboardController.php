@@ -18,36 +18,39 @@ class AdminDashboardController extends Controller
     public function index()
     {
         // Estadísticas generales
-        $stats = [
-            'total_grupos' => GrupoEmpresa::count(),
-            'grupos_activos' => GrupoEmpresa::where('activo', true)->count(),
-            'total_usuarios' => User::count(),
-            'usuarios_activos' => User::where('activo', true)->count(),
-        ];
+        // $stats = [
+        //     'total_grupos' => GrupoEmpresa::count(),
+        //     'grupos_activos' => GrupoEmpresa::where('activo', true)->count(),
+        //     'total_usuarios' => User::count(),
+        //     'usuarios_activos' => User::where('activo', true)->count(),
+        // ];
         
-        // Grupos empresariales recientes
-        $gruposRecientes = GrupoEmpresa::with('propietarios')
-            ->latest()
-            ->take(10)
-            ->get();
+        // // Grupos empresariales recientes
+        // $gruposRecientes = GrupoEmpresa::with('propietarios')
+        //     ->latest()
+        //     ->take(10)
+        //     ->get();
         
-        // Actividad reciente del sistema
-        $actividadReciente = Activity::with('causer', 'subject')
-            ->latest()
-            ->take(20)
-            ->get();
+        // // Actividad reciente del sistema
+        // $actividadReciente = Activity::with('causer', 'subject')
+        //     ->latest()
+        //     ->take(20)
+        //     ->get();
         
-        // Usuarios registrados recientemente
-        $usuariosRecientes = User::latest()
-            ->take(10)
-            ->get();
+        // // Usuarios registrados recientemente
+        // $usuariosRecientes = User::latest()
+        //     ->take(10)
+        //     ->get();
         
-        return view('apps.admin.dashboard', compact(
-            'stats',
-            'gruposRecientes',
-            'actividadReciente',
-            'usuariosRecientes'
-        ));
+
+        // return view('apps.admin.dashboard', compact(
+        //     'stats',
+        //     'gruposRecientes',
+        //     'actividadReciente',
+        //     'usuariosRecientes'
+        // ));
+
+        return view('admin.dashboard');
     }
     
     /**
